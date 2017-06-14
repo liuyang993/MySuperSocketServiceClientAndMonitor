@@ -5,9 +5,9 @@
     <Setting Name="ConnectionString" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;111&lt;/ConnectionString&gt;
+  &lt;ConnectionString&gt;Data Source=47.89.39.139,1029;Initial Catalog=RouteDB;Persist Security Info=True;User ID=sa;Password=Passw0rdPassw0rd;Connect Timeout=0&lt;/ConnectionString&gt;
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">111</Value>
+      <Value Profile="(Default)">Data Source=47.89.39.139,1029;Initial Catalog=RouteDB;Persist Security Info=True;User ID=sa;Password=Passw0rdPassw0rd;Connect Timeout=0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -85,3 +85,58 @@ Affected parameters are:
 Removing EventLog source MyRouteService.
 Service MyRouteService is being removed from the system...
 Service MyRouteService was successfully removed from the system.
+Installing assembly 'D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   logfile = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.InstallLog
+   assemblypath = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe
+Installing service MyRouteService...
+Service MyRouteService has been successfully installed.
+Creating EventLog source MyRouteService in log Application...
+Committing assembly 'D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   logfile = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.InstallLog
+   assemblypath = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe
+Uninstalling assembly 'D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   logfile = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.InstallLog
+   assemblypath = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe
+Removing EventLog source MyRouteService.
+Service MyRouteService is being removed from the system...
+Service MyRouteService was successfully removed from the system.
+Installing assembly 'D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   logfile = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.InstallLog
+   assemblypath = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe
+Installing service MyRouteService...
+Service MyRouteService has been successfully installed.
+Creating EventLog source MyRouteService in log Application...
+Committing assembly 'D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   logfile = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.InstallLog
+   assemblypath = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe
+Uninstalling assembly 'D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   logfile = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.InstallLog
+   assemblypath = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe
+Removing EventLog source MyRouteService.
+Service MyRouteService is being removed from the system...
+Service MyRouteService was successfully removed from the system.
+Installing assembly 'D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   logfile = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.InstallLog
+   assemblypath = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe
+Installing service MyRouteService...
+Service MyRouteService has been successfully installed.
+Creating EventLog source MyRouteService in log Application...
+Committing assembly 'D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe'.
+Affected parameters are:
+   logtoconsole = 
+   logfile = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.InstallLog
+   assemblypath = D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe

@@ -15,14 +15,18 @@ namespace MyRouteService
         static void Main()
         {
 
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
-            {
-                new RouteService()
-            };
-            ServiceBase.Run(ServicesToRun);
+            // for real service
 
-            /*   for debug purpose
+            //ServiceBase[] ServicesToRun;
+            //ServicesToRun = new ServiceBase[]
+            //{
+            //    new RouteService()
+            //};
+            //ServiceBase.Run(ServicesToRun);
+
+
+            
+            //for debug purpose
             #if(!DEBUG)
                         ServiceBase[] ServicesToRun;
                         ServicesToRun = new ServiceBase[]
@@ -39,7 +43,9 @@ namespace MyRouteService
 
             #endif
 
-            */
+           
+
+
         }
     }
 }

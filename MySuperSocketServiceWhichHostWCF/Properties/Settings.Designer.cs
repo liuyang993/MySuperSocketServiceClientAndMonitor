@@ -26,7 +26,8 @@ namespace MyRouteService.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("111")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=47.89.39.139,1029;Initial Catalog=RouteDB;Persist Security Info=True;" +
+            "User ID=sa;Password=Passw0rdPassw0rd;Connect Timeout=0")]
         public string ConnectionString {
             get {
                 return ((string)(this["ConnectionString"]));

@@ -25,7 +25,7 @@ namespace MyRouteService.Command
             List<clientState> clientList = new List<clientState>();
             foreach (var client in session.AppServer.GetAllSessions())
             {
-                clientState cst = new clientState { clientConnectTime = client.ClientConnectTime, clientRecv = client.iTotalRecv,clienthandle=client.iTotalFinish,clientIP=client.ClientIP};
+                clientState cst = new clientState { clientConnectTime = client.ClientConnectTime, clientRecv = client.iTotalRecv,clienthandle=client.iTotalFinish,clientIP=session.RemoteEndPoint.ToString()};
                 clientList.Add(cst);
                 
             }

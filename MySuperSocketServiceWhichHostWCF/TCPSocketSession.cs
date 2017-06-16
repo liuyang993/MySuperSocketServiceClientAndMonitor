@@ -13,68 +13,46 @@ namespace MyRouteService
 {
     public class TCPSocketSession : AppSession<TCPSocketSession>
     {
-        /// <summary>
-        /// 是否登录
-        /// </summary>
-        public bool isLogin { get; set; }
 
         /// <summary>
-        /// 机器编码
-        /// </summary>
-        public string SN { get; set; }
-
-        /// <summary>
-        /// 收到的request
+        /// total revc requests
         /// </summary>
         public int iTotalRecv { get; set; }
 
         /// <summary>
-        /// 完成的request
+        /// total finish requests
         /// </summary>
         public int iTotalFinish { get; set; }
 
         /// <summary>
-        /// 建立连接的时间
+        /// connect time
         /// </summary>
         public DateTime ClientConnectTime { get; set; }
 
 
-        //public DateTime ClientDisConnectTime { get; set; }
+        public DateTime ClientDisConnectTime { get; set; }
 
 
         /// <summary>
-        /// 客户端IP
-        /// </summary>        
-        public string ClientIP { get; set; }
-
-        /// <summary>
-        /// 是不是管理工具
+        /// If monitor tools
         /// </summary> 
         public bool bIfMonitorClient { get; set; }
 
         /// <summary>
-        /// 输出log的级别
+        /// output level
         /// </summary> 
         public int iDebugLevel { get; set; }
 
-        //protected override void OnReceiveEnded()
-        //{
-        //    int i = 1;
-        //   // RemoveStateFlag(SocketState.InReceiving);
-        //}
 
         protected override void OnSessionStarted()
         {
             iTotalRecv = 0;
             iTotalFinish = 0;
 
-            SN = Guid.NewGuid().ToString();
             ClientConnectTime = DateTime.Now;
-            ClientIP = RemoteEndPoint.Address.ToString();
             bIfMonitorClient = false;
             iDebugLevel = 3;
-
-            //this.Send("Welcome to SuperSocket WeChat Server\r\n");
+            Logger.Info("111");
 
             #region Increase Client Number Using SQL ,  now do not use this way 
             //using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
@@ -118,13 +96,15 @@ namespace MyRouteService
         protected override void OnInit()
         {
             //this.Charset = Encoding.GetEncoding("gb2312");
+           
+
             base.OnInit();
         }
 
         protected override void HandleUnknownRequest(StringRequestInfo requestInfo)
         {
-            //LogHelper.WriteLog("收到命令:" + requestInfo.Key.ToString());
-            this.Send("不知道如何处理 " + requestInfo.Key.ToString() + " 命令\r\n");
+            //this.Send("unknown request" + requestInfo.Key.ToString() + "\r\n");
+
         }
 
 
@@ -144,41 +124,41 @@ namespace MyRouteService
         /// <param name="reason"></param>
         protected override void OnSessionClosed(CloseReason reason)
         {
-            using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
-            {
-                SqlCommand sqlCmd = null;
-                SqlCommand sqlCmdUpdate = null;
-                DateTime dtNow = DateTime.Now;
+            //using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
+            //{
+            //    SqlCommand sqlCmd = null;
+            //    SqlCommand sqlCmdUpdate = null;
+            //    DateTime dtNow = DateTime.Now;
 
-                try
-                {
-                    conn.Open();
+            //    try
+            //    {
+            //        conn.Open();
 
-                    sqlCmdUpdate = new SqlCommand("update  SessionTable set Session_End_Time =  @SessionEndTime,Session_Total_Recv_Request = @SessionRecv, Session_Total_Handle_Request= @SessionHandled where Session_SN = @SessionID", conn);
+            //        sqlCmdUpdate = new SqlCommand("update  SessionTable set Session_End_Time =  @SessionEndTime,Session_Total_Recv_Request = @SessionRecv, Session_Total_Handle_Request= @SessionHandled where Session_SN = @SessionID", conn);
 
-                    sqlCmdUpdate.Parameters.AddWithValue("@SessionEndTime", dtNow);
-                    sqlCmdUpdate.Parameters.AddWithValue("@SessionID", SN);
-                    sqlCmdUpdate.Parameters.AddWithValue("@SessionRecv", iTotalRecv);
-                    sqlCmdUpdate.Parameters.AddWithValue("@SessionHandled", iTotalFinish);
+            //        sqlCmdUpdate.Parameters.AddWithValue("@SessionEndTime", dtNow);
+            //        sqlCmdUpdate.Parameters.AddWithValue("@SessionID", SN);
+            //        sqlCmdUpdate.Parameters.AddWithValue("@SessionRecv", iTotalRecv);
+            //        sqlCmdUpdate.Parameters.AddWithValue("@SessionHandled", iTotalFinish);
 
 
-                    sqlCmdUpdate.CommandTimeout = 200;
-                    if (conn.State == ConnectionState.Closed)
-                        conn.Open();
-                    try
-                    {
-                        sqlCmdUpdate.ExecuteNonQuery();
-                    }
-                    catch (Exception aep)
-                    {
-                        // File.AppendAllText(strCurrentPath + @"\test.txt", "insert error " + aep.Message + "\r\n");
-                        return;
-                    }
-                }
-                catch (Exception cep)
-                {
-                }
-            }
+            //        sqlCmdUpdate.CommandTimeout = 200;
+            //        if (conn.State == ConnectionState.Closed)
+            //            conn.Open();
+            //        try
+            //        {
+            //            sqlCmdUpdate.ExecuteNonQuery();
+            //        }
+            //        catch (Exception aep)
+            //        {
+            //            // File.AppendAllText(strCurrentPath + @"\test.txt", "insert error " + aep.Message + "\r\n");
+            //            return;
+            //        }
+            //    }
+            //    catch (Exception cep)
+            //    {
+            //    }
+            //}
 
 
 

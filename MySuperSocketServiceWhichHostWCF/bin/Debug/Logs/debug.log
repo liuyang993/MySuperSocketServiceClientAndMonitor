@@ -1,0 +1,11 @@
+﻿2017-06-16 09:08:38,209 [19032] DEBUG DefaultBootstrap - The server instance TCPSocketServer has been created!
+2017-06-16 09:08:41,028 [19032] DEBUG TCPSocketServer - The command CALLSTART(MyRouteService.Command.CALLSTART, MyRouteService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null) has been discovered
+2017-06-16 09:08:41,029 [19032] DEBUG TCPSocketServer - The command CHECK(MyRouteService.Command.CHECK, MyRouteService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null) has been discovered
+2017-06-16 09:08:41,029 [19032] DEBUG TCPSocketServer - The command GETALLCLIENT(MyRouteService.Command.GETALLCLIENT, MyRouteService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null) has been discovered
+2017-06-16 09:08:41,029 [19032] DEBUG TCPSocketServer - The command ROUTEREQUEST(MyRouteService.Command.ROUTEREQUEST, MyRouteService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null) has been discovered
+2017-06-16 09:08:41,030 [19032] DEBUG TCPSocketServer - The command START(MyRouteService.Command.START, MyRouteService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null) has been discovered
+2017-06-16 09:08:41,103 [19032] DEBUG DefaultBootstrap - The server instance TCPSocketServer has been initialized!
+2017-06-16 09:08:43,564 [19032] DEBUG DefaultBootstrap - The PerformanceMonitor has been initialized!
+2017-06-16 09:08:43,564 [19032] DEBUG DefaultBootstrap - The Bootstrap has been initialized!
+2017-06-16 09:08:43,672 [19032] DEBUG TCPSocketServer - Listener (127.0.0.1:2020) was started
+2017-06-16 09:08:43,691 [19032] DEBUG DefaultBootstrap - The PerformanceMonitor has been started!

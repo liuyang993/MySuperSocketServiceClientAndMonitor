@@ -25,9 +25,9 @@ namespace MyRouteService
             //ServiceBase.Run(ServicesToRun);
 
 
-            
+
             //for debug purpose
-            #if(!DEBUG)
+#if (!DEBUG)
                         ServiceBase[] ServicesToRun;
                         ServicesToRun = new ServiceBase[]
                         {
@@ -35,8 +35,10 @@ namespace MyRouteService
                         };
                         ServiceBase.Run(ServicesToRun);
 
-            #else // If you are currently in debug mode
-                        string[] args = { "a", "b" };
+#else // If you are currently in debug mode
+
+
+            string[] args = { "a", "b" };
                         RouteService service = new RouteService(); // create your service's instance
                         service.Start(args); // start this service
                         Thread.Sleep(Timeout.Infinite);

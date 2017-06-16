@@ -1,7 +1,7 @@
-D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe.config
 D:\code\RouteService\MySuperSocketServiceWhichHostWCF\obj\Debug\MyRouteService.ProjectInstaller.resources
 D:\code\RouteService\MySuperSocketServiceWhichHostWCF\obj\Debug\MyRouteService.RouteService.resources
 D:\code\RouteService\MySuperSocketServiceWhichHostWCF\obj\Debug\MyRouteService.csproj.GenerateResource.Cache
+D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe.config
 D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.exe
 D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\MyRouteService.pdb
 D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\log4net.dll

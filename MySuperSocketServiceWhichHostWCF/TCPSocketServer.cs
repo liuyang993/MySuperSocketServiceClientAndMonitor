@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 using System.Threading;
 
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using SuperSocket.SocketBase.Protocol;
 using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketEngine;    // for  BootstrapFactory 
@@ -48,10 +45,10 @@ namespace MyRouteService
 
     public class TCPSocketServer : AppServer<TCPSocketSession>
     {
-        public ConcurrentQueue<CommandDetail> CommandDetailList = null;
+        public ConcurrentQueue<CommandDetail> CommandDetailList = null;    // ConcurrentQueue :  thread safe queue
         public int iTotalFinish = 0;
 
-        public class CacheQueueList
+        public class CacheQueueList                        // why exist this class ?  because alway stick to this word "Cache" ,  original deal with Command in TCPSession
         {
             public ConcurrentQueue<CacheItem> CachelList { get; set; }
             public TCPSocketServer ts;

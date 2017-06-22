@@ -72,6 +72,7 @@
     <Compile Include="Command\Check.cs" />
     <Compile Include="Command\GETALLCLIENT.cs" />
     <Compile Include="Command\GETNAP.cs" />
+    <Compile Include="Command\SETDEBUGLEVEL.cs" />
     <Compile Include="Command\Start.cs" />
     <Compile Include="CommonTools.cs" />
     <Compile Include="FixedBeginEndFilter.cs" />

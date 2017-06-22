@@ -24,30 +24,26 @@ namespace MyRouteService
             //};
             //ServiceBase.Run(ServicesToRun);
 
-
-
             //for debug purpose
+
 #if (!DEBUG)
-                        ServiceBase[] ServicesToRun;
-                        ServicesToRun = new ServiceBase[]
-                        {
-                            new RouteService()
-                        };
-                        ServiceBase.Run(ServicesToRun);
+                                    ServiceBase[] ServicesToRun;
+                                    ServicesToRun = new ServiceBase[]
+                                    {
+                                        new RouteService()
+                                    };
+                                    ServiceBase.Run(ServicesToRun);
 
 #else // If you are currently in debug mode
 
 
             string[] args = { "a", "b" };
-                        RouteService service = new RouteService(); // create your service's instance
-                        service.Start(args); // start this service
-                        Thread.Sleep(Timeout.Infinite);
-
-            #endif
-
-           
+            RouteService service = new RouteService(); // create your service's instance
+            service.Start(args); // start this service
+            Thread.Sleep(Timeout.Infinite);
 
 
+#endif
         }
     }
 }

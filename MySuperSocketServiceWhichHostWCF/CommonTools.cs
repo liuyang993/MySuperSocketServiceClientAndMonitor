@@ -8,6 +8,9 @@ namespace MyRouteService
 {
     public static class CommonTools
     {
+
+        public  const int MAXCACHENUMBER = 10000;
+
         public static byte[] CombineReply(string strContent)
         {
             byte[] bHead = Encoding.ASCII.GetBytes(@"<reply>");

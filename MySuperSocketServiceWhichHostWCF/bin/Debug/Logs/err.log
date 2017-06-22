@@ -1,1 +1,45 @@
-﻿
+﻿2017-06-22 12:07:04,929 [612] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: Only one usage of each socket address (protocol/network address/port) is normally permitted
+System.Net.Sockets.SocketException (0x80004005): Only one usage of each socket address (protocol/network address/port) is normally permitted
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at SuperSocket.SocketEngine.TcpAsyncSocketListener.Start(IServerConfig config) in D:\code\SuperSocket166Source\SocketEngine\TcpAsyncSocketListener.cs:line 41
+2017-06-22 12:11:53,216 [13280] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: Only one usage of each socket address (protocol/network address/port) is normally permitted
+System.Net.Sockets.SocketException (0x80004005): Only one usage of each socket address (protocol/network address/port) is normally permitted
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at SuperSocket.SocketEngine.TcpAsyncSocketListener.Start(IServerConfig config) in D:\code\SuperSocket166Source\SocketEngine\TcpAsyncSocketListener.cs:line 41
+2017-06-22 12:12:10,715 [4260] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: Only one usage of each socket address (protocol/network address/port) is normally permitted
+System.Net.Sockets.SocketException (0x80004005): Only one usage of each socket address (protocol/network address/port) is normally permitted
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at SuperSocket.SocketEngine.TcpAsyncSocketListener.Start(IServerConfig config) in D:\code\SuperSocket166Source\SocketEngine\TcpAsyncSocketListener.cs:line 41
+2017-06-22 12:12:40,266 [5004] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: Only one usage of each socket address (protocol/network address/port) is normally permitted
+System.Net.Sockets.SocketException (0x80004005): Only one usage of each socket address (protocol/network address/port) is normally permitted
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at SuperSocket.SocketEngine.TcpAsyncSocketListener.Start(IServerConfig config) in D:\code\SuperSocket166Source\SocketEngine\TcpAsyncSocketListener.cs:line 41
+2017-06-22 12:19:06,261 [8644] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: Only one usage of each socket address (protocol/network address/port) is normally permitted
+System.Net.Sockets.SocketException (0x80004005): Only one usage of each socket address (protocol/network address/port) is normally permitted
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at SuperSocket.SocketEngine.TcpAsyncSocketListener.Start(IServerConfig config) in D:\code\SuperSocket166Source\SocketEngine\TcpAsyncSocketListener.cs:line 41
+2017-06-22 12:20:29,183 [12204] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: Only one usage of each socket address (protocol/network address/port) is normally permitted
+System.Net.Sockets.SocketException (0x80004005): Only one usage of each socket address (protocol/network address/port) is normally permitted
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at SuperSocket.SocketEngine.TcpAsyncSocketListener.Start(IServerConfig config) in D:\code\SuperSocket166Source\SocketEngine\TcpAsyncSocketListener.cs:line 41
+2017-06-22 12:21:42,958 [14724] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: Only one usage of each socket address (protocol/network address/port) is normally permitted
+System.Net.Sockets.SocketException (0x80004005): Only one usage of each socket address (protocol/network address/port) is normally permitted
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at SuperSocket.SocketEngine.TcpAsyncSocketListener.Start(IServerConfig config) in D:\code\SuperSocket166Source\SocketEngine\TcpAsyncSocketListener.cs:line 41
+2017-06-22 12:26:44,260 [6420] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: Only one usage of each socket address (protocol/network address/port) is normally permitted
+System.Net.Sockets.SocketException (0x80004005): Only one usage of each socket address (protocol/network address/port) is normally permitted
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at SuperSocket.SocketEngine.TcpAsyncSocketListener.Start(IServerConfig config) in D:\code\SuperSocket166Source\SocketEngine\TcpAsyncSocketListener.cs:line 41
+2017-06-22 12:31:57,165 [4188] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: Only one usage of each socket address (protocol/network address/port) is normally permitted
+System.Net.Sockets.SocketException (0x80004005): Only one usage of each socket address (protocol/network address/port) is normally permitted
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at SuperSocket.SocketEngine.TcpAsyncSocketListener.Start(IServerConfig config) in D:\code\SuperSocket166Source\SocketEngine\TcpAsyncSocketListener.cs:line 41

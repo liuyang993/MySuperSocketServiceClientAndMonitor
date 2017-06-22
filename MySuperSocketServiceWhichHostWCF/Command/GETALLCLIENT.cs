@@ -15,24 +15,27 @@ namespace MyRouteService.Command
         public DateTime clientConnectTime { get; set; }
         public int clientRecv { get; set; }
         public int clienthandle { get; set; }
-        public string clientIP { get; set; } 
+        public string clientIP { get; set; }
+        public string sessionID { get; set; }
     }
 
     public class GETALLCLIENT : CommandBase<TCPSocketSession, StringRequestInfo>
     {
         public override void ExecuteCommand(TCPSocketSession session, StringRequestInfo requestInfo)
         {
+            session.bIfMonitorClient = true;
+
             List<clientState> clientList = new List<clientState>();
             foreach (var client in session.AppServer.GetAllSessions())
             {
-                clientState cst = new clientState { clientConnectTime = client.ClientConnectTime, clientRecv = client.iTotalRecv,clienthandle=client.iTotalFinish,clientIP=session.RemoteEndPoint.ToString()};
+                clientState cst = new clientState { clientConnectTime = client.ClientConnectTime, clientRecv = client.iTotalRecv, clienthandle = client.iTotalFinish, clientIP = client.RemoteEndPoint.Address.ToString(), sessionID = client.SessionID };
+                //var sReplyT = JsonConvert.SerializeObject(cst);
                 clientList.Add(cst);
-                
+
             }
 
-           
             string sReply = JsonConvert.SerializeObject(clientList);
-            byte[] bHead = Encoding.ASCII.GetBytes(@"<reply>");
+            byte[] bHead = Encoding.ASCII.GetBytes(@"<reply>GETCLIENTSTATE;");
             byte[] bTail = Encoding.ASCII.GetBytes(@"</reply>");
             byte[] bData = Encoding.ASCII.GetBytes(sReply);
 
@@ -42,19 +45,15 @@ namespace MyRouteService.Command
             System.Buffer.BlockCopy(bData, 0, rv, bHead.Length, bData.Length);
             System.Buffer.BlockCopy(bTail, 0, rv, bHead.Length + bData.Length, bTail.Length);
 
-
-
-
-
             var str = System.Text.Encoding.Default.GetString(rv);
-            
 
+            int icount = ((TCPSocketServer)session.AppServer).CommandDetailList.Count;
             session.Send(rv, 0, rv.Length);    // reply OK first
-            Console.WriteLine(str);
+                                               //Console.WriteLine(str);
 
             //session.Send("success\r\n");
 
-            
+
         }  //end of execute command 
     }
 }

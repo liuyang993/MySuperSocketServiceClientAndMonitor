@@ -31,7 +31,6 @@ namespace MyRouteService
         public string err_reason { get; set; }
     }
 
-
     //class of cache list item 
     public class CacheItem
     {
@@ -53,10 +52,9 @@ namespace MyRouteService
             public ConcurrentQueue<CacheItem> CachelList { get; set; }
             public TCPSocketServer ts;
 
-
-            public bool enQueue(CacheItem ci)
+            public bool enQueue(CacheItem ci)     // ci combine by TCPSession , and use it as parameter call TCPServer.enQueue
             {
-                if (CachelList.Count > 10000)
+                if (CachelList.Count > CommonTools.MAXCACHENUMBER)   // 10000
                     return false;     // no longer enqueue
                 CachelList.Enqueue(ci);
                 ThreadPool.QueueUserWorkItem(new WaitCallback(ThreadWhichWillCallSQL), ci);
@@ -69,11 +67,16 @@ namespace MyRouteService
                 //Interlocked.Decrement(ref ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
                 //Console.WriteLine("still have {0} threads pending.", ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
 
-                string sSQLRtnMsg = null;
+                string sSQLRtnReason = null;
+                int iSQLRtnCanAccept;
+                string sSQLRtnSRC = null;
+                string sSQLRtnDST = null;
+                int iSQLRtnCustID;
+
                 StringBuilder sb = new StringBuilder();
 
                 #region callsql
-                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
+                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))   // every command open a new connection , is it ok ?
                 {
                     try
                     {
@@ -86,40 +89,9 @@ namespace MyRouteService
                         switch (typed.commandKey)
                         {
                             case "ROUTEREQUEST":
-                                //comm.CommandText = "sp_Test_alwayRetTrue";
-                                //comm.CommandType = System.Data.CommandType.StoredProcedure;
-                                //comm.CommandTimeout = 300;
-
-
-                                //comm.Parameters.Add(new SqlParameter()
-                                //{
-                                //    ParameterName = "@I_CallID_A",
-                                //    SqlDbType = SqlDbType.Int,
-                                //    Value =1,
-                                //    Size = 4
-                                //});
-
-                                //comm.Parameters.Add(new SqlParameter()
-                                //{
-                                //    ParameterName = "@O_ErrCode",
-                                //    SqlDbType = SqlDbType.Int,
-                                //    Direction = ParameterDirection.Output,
-                                //    Size = 4
-                                //});
-
-                                //comm.Parameters.Add(new SqlParameter()
-                                //{
-                                //    ParameterName = "@O_Msg",
-                                //    SqlDbType = SqlDbType.VarChar,
-                                //    //Value =sSQLRtnMsg,
-                                //    Direction = ParameterDirection.Output,
-                                //    Size = 1000
-                                //});
-
                                 comm.CommandText = "sp_api_route_request";
                                 comm.CommandType = System.Data.CommandType.StoredProcedure;
                                 comm.CommandTimeout = 300;
-
 
                                 comm.Parameters.Add(new SqlParameter()
                                 {
@@ -179,6 +151,33 @@ namespace MyRouteService
                                     Size = 50
                                 });
 
+                                comm.Parameters.Add(new SqlParameter()
+                                {
+                                    ParameterName = "@I_CustID",
+                                    SqlDbType = SqlDbType.Int,
+                                    //Value =sSQLRtnMsg,
+                                    Direction = ParameterDirection.Output,
+                                    Size = 4
+                                });
+
+                                comm.Parameters.Add(new SqlParameter()
+                                {
+                                    ParameterName = "@O_RegularSRC",
+                                    SqlDbType = SqlDbType.VarChar,
+                                    //Value =sSQLRtnMsg,
+                                    Direction = ParameterDirection.Output,
+                                    Size = 30
+                                });
+
+                                comm.Parameters.Add(new SqlParameter()
+                                {
+                                    ParameterName = "@O_RegularDST",
+                                    SqlDbType = SqlDbType.VarChar,
+                                    //Value =sSQLRtnMsg,
+                                    Direction = ParameterDirection.Output,
+                                    Size = 30
+                                });
+
                                 reader = comm.ExecuteReader();
 
                                 if (reader != null)
@@ -189,14 +188,18 @@ namespace MyRouteService
                                 comm.Cancel();
                                 reader.Close();
 
-                                int iRet = int.Parse(comm.Parameters["@O_CanAccept"].Value.ToString());
-                                sSQLRtnMsg = comm.Parameters["@O_Reason"].Value.ToString();
-                              
-                                sb.Append(@"ROUTEREQUEST;" + comm.Parameters["@I_Callid"].Value.ToString() + @"," + iRet.ToString() + @"," + sSQLRtnMsg + @",");
+                                iSQLRtnCanAccept = int.Parse(comm.Parameters["@O_CanAccept"].Value.ToString());
+                                sSQLRtnReason = comm.Parameters["@O_Reason"].Value.ToString();
+                                sSQLRtnSRC = comm.Parameters["@O_RegularSRC"].Value.ToString();
+                                sSQLRtnDST = comm.Parameters["@O_RegularDST"].Value.ToString();
+                                iSQLRtnCustID = int.Parse(comm.Parameters["@I_CustID"].Value.ToString());
+
+
+                                sb.Append(@"ROUTEREQUEST;" + comm.Parameters["@I_Callid"].Value.ToString() + @"," + iSQLRtnCanAccept.ToString() + @"," + sSQLRtnReason + @",");
 
                                 for (int iDT = 0; iDT < dt.Rows.Count; iDT++)
                                 {
-                                    sb.Append(dt.Rows[iDT]["NAP"].ToString() + @"," + dt.Rows[iDT]["SRC"].ToString() + @"," + dt.Rows[iDT]["DST"].ToString() + @"," + dt.Rows[iDT]["RateFee"].ToString() + @"," + dt.Rows[iDT]["RateCost"].ToString() + @"," + dt.Rows[iDT]["Piority"].ToString() + @"," + dt.Rows[iDT]["Weight"].ToString() + @",");
+                                    sb.Append(dt.Rows[iDT]["NAP"].ToString() + @"," + dt.Rows[iDT]["SRC"].ToString() + @"," + dt.Rows[iDT]["DST"].ToString() + @"," + dt.Rows[iDT]["RateFee"].ToString() + @"," + dt.Rows[iDT]["RateCost"].ToString()  + @",");
                                 }
 
                                 sb = sb.Remove(sb.Length - 1, 1);
@@ -234,16 +237,12 @@ namespace MyRouteService
                                 break;
                             default:
                                 break;
-
-
                         }
-
-                        //comm.ExecuteNonQuery();
+                     
                     }
                     catch (Exception uep)
                     {
-                        //区别 数据库下线还是存储过程出错  TODO 
-                        //记录 request and  出错原因
+                        //TODO record request and error reason
                         Console.WriteLine("call SQL error");
                         typed.cDetail.cmd_reply_time = DateTime.Now;
                         typed.cDetail.reply_content = uep.Message;
@@ -259,11 +258,8 @@ namespace MyRouteService
 
                 #endregion
 
-                //string sReply = @"<reply>" + sSQLRtnMsg + @"</reply>";
+
                 string sReply = @"<reply>" + sb.ToString() + @"</reply>";
-
-
-
 
                 byte[] rv = Encoding.ASCII.GetBytes(sReply);
 
@@ -284,7 +280,7 @@ namespace MyRouteService
                     var sessions = ts.GetSessions(s => s.bIfMonitorClient == true && s.iDebugLevel < 1);  // send to monitor who open debug mode
                     foreach (var s in sessions)
                     {
-                        string sRequest = @"<reply>NORMALLOG@" + typed.session.RemoteEndPoint.Address.ToString() + @"----" + typed.sToMonitor + "To " + sSQLRtnMsg + @"</reply>";
+                        string sRequest = @"<reply>NORMALLOG;" + typed.session.RemoteEndPoint.Address.ToString() + @"----" + typed.sToMonitor + "To " + sSQLRtnReason + @"</reply>";
                         byte[] bRequest = Encoding.ASCII.GetBytes(sRequest);
 
                         s.Send(bRequest, 0, bRequest.Length);
@@ -304,7 +300,7 @@ namespace MyRouteService
                 }
 
                 CacheItem ciOut;
-                CachelList.TryDequeue(out ciOut);
+                CachelList.TryDequeue(out ciOut);            // CacheList must be enlarge , hole additional out parameters , and dequeue when the call is terminate 
 
                 return;
 
@@ -325,20 +321,17 @@ namespace MyRouteService
         //: base(new DefaultReceiveFilterFactory<FixedBeginEndFilter, StringRequestInfo>())
         //: base(new CommandLineReceiveFilterFactory(Encoding.Default, new BasicRequestInfoParser(":", ",")))
         {
-            //ClientList = new List<SessionDetail>();
-            //int i = this.SessionCount;
-
             CommandDetailList = new ConcurrentQueue<CommandDetail>();
             cacheList = new CacheQueueList();
             cacheList.CachelList = new ConcurrentQueue<CacheItem>();
             cacheList.ts = this;
 
 
+            // timer to record income and outgoing command into DB
             //_timer = new System.Threading.Timer(new TimerCallback(JobCallBack), null, 0, 5000);
 
         }
 
-        //异步向客户端发送未确认的消息线程对象
         System.Threading.Thread th = null;
 
         private void JobCallBack(object state)
@@ -555,63 +548,6 @@ namespace MyRouteService
             switch (requestInfo.Key.ToUpper())
             {
                 case ("ECHO"):
-                    //post  store procedure name and parameter into thread pool 
-                    int i = 1;
-                    //ThreadPool.QueueUserWorkItem(new WaitCallback(ThreadWhichWillCallSQL), session);
-
-                    #region callsql
-                    //using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
-                    //{
-                    //    try
-                    //    {
-                    //        conn.Open();
-
-                    //        SqlCommand comm = conn.CreateCommand();
-                    //        //comm.CommandText = "sp_app_RatePlanDetail_Add_1114";
-                    //        comm.CommandText = "sp_Test_alwayRetTrue";
-                    //        comm.CommandType = System.Data.CommandType.StoredProcedure;
-                    //        comm.CommandTimeout = 300;
-
-
-                    //        comm.Parameters.Add(new SqlParameter()
-                    //        {
-                    //            ParameterName = "@I_CallID_A",
-                    //            SqlDbType = SqlDbType.Int,
-                    //            Value = 1,
-                    //            Size = 4
-
-                    //        });
-
-
-                    //        comm.Parameters.Add(new SqlParameter()
-                    //        {
-                    //            ParameterName = "@O_ErrCode",
-                    //            SqlDbType = SqlDbType.Int,
-                    //            Direction = ParameterDirection.Output,
-                    //            Size = 4
-                    //        });
-
-                    //        comm.Parameters.Add(new SqlParameter()
-                    //        {
-                    //            ParameterName = "@O_Msg",
-                    //            SqlDbType = SqlDbType.VarChar,
-                    //            Direction = ParameterDirection.Output,
-                    //            Size = 1000
-                    //        });
-
-                    //        comm.ExecuteNonQuery();
-                    //    }
-                    //    catch (Exception uep)
-                    //    {
-                    //        return;
-                    //    }
-                    //}   //using
-
-                    #endregion
-                    //Thread.Sleep(5000);
-                    //session.Send(requestInfo.Body);
-                    //SocketAsyncEventArgs e;
-                    //e.Buffer
                     break;
 
                 case ("ADD"):
@@ -664,13 +600,6 @@ namespace MyRouteService
 
         public void threadFunc(object arg)
         {
-
-
-
-
-
-
-
         }
         protected override void OnStopped()
         {

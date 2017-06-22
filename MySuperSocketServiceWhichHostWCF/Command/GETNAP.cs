@@ -130,6 +130,7 @@ namespace MyRouteService.Command
             sSendToMonitor = "From " + requestInfo.Key + @":" + requestInfo.Body;
 
             // new methoc use tcpserver cache 
+
             CacheItem ci = new CacheItem();
             ci.session = session;
             ci.commandKey = requestInfo.Key;

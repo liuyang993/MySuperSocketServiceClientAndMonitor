@@ -145,12 +145,14 @@ namespace MyRouteService.Command
             }
 
 
+            // end new methoc use tcpserver cache 
+
             string sReply = @"<reply>" + @"ROUTEREQUEST;" + strCallID + @",GetNapRouteIsOK" + @"</reply>";
             byte[] rv = Encoding.ASCII.GetBytes(sReply);
 
             try
             {
-                Console.WriteLine("quick reply " + sReply + " {0} times", session.iTotalRecv);
+                //Console.WriteLine("quick reply " + sReply + " {0} times", session.iTotalRecv);
                 cmdDetail.cmd_reply_time = DateTime.Now;
                 session.Send(rv, 0, rv.Length);    // reply OK first
                 sSendToMonitor = sSendToMonitor + "To " + "GetNapRouteIsOK";
@@ -178,17 +180,24 @@ namespace MyRouteService.Command
 
 
 
-            //put all parameter into one class     2017-6-1  temp comment
+            //put all parameter into one class     2017-6-1  temp comment   old method
+
             //classParameterSessionAndRequestID cp1 = new classParameterSessionAndRequestID();
             //cp1.ts = session;
             //cp1.sToMonitor = sSendToMonitor;
             //cp1.cmdDetail = cmdDetail;
 
             //ThreadPool.QueueUserWorkItem(new WaitCallback(ThreadWhichWillCallSQL), cp1);
-            //Interlocked.Increment(ref ((TCPSocketServer)session.AppServer).iPendingThread);
+
+            //put all parameter into one class     2017-6-1  temp comment
 
 
-            //return;
+
+
+
+
+
+            return;
 
             //20170522
 
@@ -310,13 +319,10 @@ namespace MyRouteService.Command
 
             classParameterSessionAndRequestID typed = (classParameterSessionAndRequestID)o1;
 
-            Interlocked.Decrement(ref ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
-            Console.WriteLine("still have {0} threads pending.", ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
-
-
+            //Interlocked.Decrement(ref ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
+            //Console.WriteLine("still have {0} threads pending.", ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
 
             string sSQLRtnMsg = null;
-
 
             #region callsql
             using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
@@ -385,33 +391,33 @@ namespace MyRouteService.Command
 
             try
             {
-                if (typed.ts.Connected)
-                {
+                //if (typed.ts.Connected)
+                //{
                     typed.ts.Send(rv, 0, rv.Length);
-                    Console.WriteLine(sReply + @"---------" + typed.ts.iTotalFinish.ToString());
+                    //Console.WriteLine(sReply + @"---------" + typed.ts.iTotalFinish.ToString());
 
                     //typed.ts.SocketSession.Client.Send(rv);
 
 
-                }
-                typed.cmdDetail.reply_content = sReply;
-                typed.cmdDetail.cmd_reply_time = DateTime.Now;
+                //}
+                //typed.cmdDetail.reply_content = sReply;
+                //typed.cmdDetail.cmd_reply_time = DateTime.Now;
 
-                ((TCPSocketServer)typed.ts.AppServer).CommandDetailList.Enqueue(typed.cmdDetail);
+                //((TCPSocketServer)typed.ts.AppServer).CommandDetailList.Enqueue(typed.cmdDetail);
 
-                var sessions = typed.ts.AppServer.GetSessions(s => s.bIfMonitorClient == true && s.iDebugLevel < 1);  // send to monitor who open debug mode
-                foreach (var s in sessions)
-                {
-                    string sRequest = @"<reply>NORMALLOG@" + typed.ts.RemoteEndPoint.Address.ToString() + @"----" + typed.sToMonitor + "To " + sSQLRtnMsg + @"</reply>";
-                    byte[] bRequest = Encoding.ASCII.GetBytes(sRequest);
+                //var sessions = typed.ts.AppServer.GetSessions(s => s.bIfMonitorClient == true && s.iDebugLevel < 1);  // send to monitor who open debug mode
+                //foreach (var s in sessions)
+                //{
+                //    string sRequest = @"<reply>NORMALLOG@" + typed.ts.RemoteEndPoint.Address.ToString() + @"----" + typed.sToMonitor + "To " + sSQLRtnMsg + @"</reply>";
+                //    byte[] bRequest = Encoding.ASCII.GetBytes(sRequest);
 
-                    s.Send(bRequest, 0, bRequest.Length);
-                }
+                //    s.Send(bRequest, 0, bRequest.Length);
+                //}
 
-                Thread.BeginCriticalRegion();
-                typed.ts.iTotalFinish++;          // total handle +1
-                //Console.WriteLine("total reply {0} " + typed.ts.iTotalFinish);
-                Thread.EndCriticalRegion();
+                //Thread.BeginCriticalRegion();
+                //typed.ts.iTotalFinish++;          // total handle +1
+                ////Console.WriteLine("total reply {0} " + typed.ts.iTotalFinish);
+                //Thread.EndCriticalRegion();
 
 
             }

@@ -1,0 +1,15 @@
+D:\code\RouteService\RouterClient\obj\Debug\RouterClient.Form1.resources
+D:\code\RouteService\RouterClient\obj\Debug\RouterClient.Properties.Resources.resources
+D:\code\RouteService\RouterClient\obj\Debug\RouterClient.csproj.GenerateResource.Cache
+D:\code\RouteService\RouterClient\bin\Debug\RouterClient.exe
+D:\code\RouteService\RouterClient\bin\Debug\RouterClient.pdb
+D:\code\RouteService\RouterClient\bin\Debug\log4net.dll
+D:\code\RouteService\RouterClient\obj\Debug\RouterClient.exe
+D:\code\RouteService\RouterClient\obj\Debug\RouterClient.pdb
+D:\code\RouteService\RouterClient\bin\Debug\log4net.config
+D:\code\RouteService\RouterClient\bin\Debug\SuperSocket.ProtoBase.dll
+D:\code\RouteService\RouterClient\bin\Debug\SuperSocket.ProtoBase.xml
+D:\code\RouteService\RouterClient\obj\Debug\RouterClient.csprojResolveAssemblyReference.cache
+D:\code\RouteService\RouterClient\bin\Debug\RouterClient.exe.config
+D:\code\RouteService\RouterClient\bin\Debug\SuperSocket.ClientEngine.dll
+D:\code\RouteService\RouterClient\bin\Debug\SuperSocket.ClientEngine.pdb

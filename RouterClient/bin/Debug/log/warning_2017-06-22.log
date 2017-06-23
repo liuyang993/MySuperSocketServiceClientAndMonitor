@@ -1,0 +1,120 @@
+2017-06-22 15:48:20,468 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,468 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,493 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,493 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,510 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,530 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,540 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,521 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,578 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,549 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,601 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,609 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,615 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,615 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,636 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,659 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,659 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,659 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,683 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,670 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,709 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,733 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,709 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,744 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,755 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,765 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,797 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,807 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,852 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,818 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,870 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,905 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,905 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,944 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,955 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:21,011 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:20,980 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:21,045 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:21,069 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90
+2017-06-22 15:48:21,069 ERROR - 
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RouterClient.RClient.OnWork() in D:\code\RouteService\RouterClient\RClient.cs:line 90

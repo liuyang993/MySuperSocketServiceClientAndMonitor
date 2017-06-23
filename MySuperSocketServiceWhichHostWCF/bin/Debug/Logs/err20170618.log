@@ -1,0 +1,4 @@
+﻿2017-06-18 14:54:38,253 [4320] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: An existing connection was forcibly closed by the remote host
+System.Net.Sockets.SocketException (0x80004005): An existing connection was forcibly closed by the remote host
+2017-06-18 14:54:38,261 [2544] ERROR TCPSocketServer - Listener (127.0.0.1:2020) error: An existing connection was forcibly closed by the remote host
+System.Net.Sockets.SocketException (0x80004005): An existing connection was forcibly closed by the remote host

@@ -1,0 +1,186 @@
+﻿2017-06-16 09:08:43,674 [19032] INFO  TCPSocketServer - The server instance TCPSocketServer has been started!
+2017-06-16 09:08:43,982 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.00%, Physical Memory Usage: 46,510,080.00, Total Thread Count: 36
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 0
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 10
+Total Sending Queue Items: 10
+
+2017-06-16 09:09:11,500 [7936] INFO  TCPSocketServer - Session: 1d8198bd-f5a8-4006-b2b9-88c4886c8c92/127.0.0.1:54224
+A new session connected!
+2017-06-16 09:09:11,531 [4288] INFO  TCPSocketServer - 111
+2017-06-16 09:09:43,740 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.08%, Physical Memory Usage: 48,508,928.00, Total Thread Count: 35
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:10:43,755 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.03%, Physical Memory Usage: 48,668,672.00, Total Thread Count: 35
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:11:43,802 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.05%, Physical Memory Usage: 48,893,952.00, Total Thread Count: 35
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:12:43,784 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.03%, Physical Memory Usage: 48,607,232.00, Total Thread Count: 35
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:13:43,827 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.02%, Physical Memory Usage: 48,680,960.00, Total Thread Count: 34
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:14:43,798 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.05%, Physical Memory Usage: 49,045,504.00, Total Thread Count: 34
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:15:43,820 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.03%, Physical Memory Usage: 49,156,096.00, Total Thread Count: 34
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:16:43,912 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.06%, Physical Memory Usage: 49,307,648.00, Total Thread Count: 34
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:17:43,934 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.03%, Physical Memory Usage: 49,471,488.00, Total Thread Count: 34
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:18:43,916 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.03%, Physical Memory Usage: 49,635,328.00, Total Thread Count: 34
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:19:43,964 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.03%, Physical Memory Usage: 49,221,632.00, Total Thread Count: 34
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+
+2017-06-16 09:20:43,945 [4288] INFO  Performance - ---------------------------------------------------
+CPU Usage: 0.02%, Physical Memory Usage: 49,381,376.00, Total Thread Count: 34
+AvailableWorkingThreads: 99, AvailableCompletionPortThreads: 100
+MaxWorkingThreads: 100, MaxCompletionPortThreads: 100
+TCPSocketServer ----------------------------------
+Started Time: 6/16/2017 9:08:43 AM
+Is Running: True
+Total Connections: 1
+Maximum Allowed Connection Number: 100
+Total Handled Requests: 0
+Request Handling Speed (#/second): 0
+Avialable Sending Queue Items: 9
+Total Sending Queue Items: 10
+

@@ -24,7 +24,7 @@ namespace MyRouteService
             //};
             //ServiceBase.Run(ServicesToRun);
 
-            //for debug purpose
+            // for debug purpose
 
 #if (!DEBUG)
                                     ServiceBase[] ServicesToRun;

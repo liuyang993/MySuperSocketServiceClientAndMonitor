@@ -265,31 +265,28 @@ namespace MyRouteService
 
                 try
                 {
-                    if (typed.session.Connected)
-                    {
+                    //if (typed.session.Connected)
+                    //{
                         typed.session.Send(rv, 0, rv.Length);
-                        Console.WriteLine(sReply + @"---------" + ts.iTotalFinish.ToString());
-                        ts.iTotalFinish++;
+                        //Console.WriteLine(sReply + @"---------" + ts.iTotalFinish.ToString());
+                        //ts.iTotalFinish++;
 
-                    }
-                    typed.cDetail.reply_content = sReply;
-                    typed.cDetail.cmd_reply_time = DateTime.Now;
+                    //}
 
-                    ts.CommandDetailList.Enqueue(typed.cDetail);
 
-                    var sessions = ts.GetSessions(s => s.bIfMonitorClient == true && s.iDebugLevel < 1);  // send to monitor who open debug mode
-                    foreach (var s in sessions)
-                    {
-                        string sRequest = @"<reply>NORMALLOG;" + typed.session.RemoteEndPoint.Address.ToString() + @"----" + typed.sToMonitor + "To " + sSQLRtnReason + @"</reply>";
-                        byte[] bRequest = Encoding.ASCII.GetBytes(sRequest);
+                    //typed.cDetail.reply_content = sReply;
+                    //typed.cDetail.cmd_reply_time = DateTime.Now;
 
-                        s.Send(bRequest, 0, bRequest.Length);
-                    }
+                    //ts.CommandDetailList.Enqueue(typed.cDetail);
 
-                    //Thread.BeginCriticalRegion();
-                    //typed.ts.iTotalFinish++;          // total handle +1
-                    //Console.WriteLine("total reply {0} " + typed.ts.iTotalFinish);
-                    //Thread.EndCriticalRegion();
+                    //var sessions = ts.GetSessions(s => s.bIfMonitorClient == true && s.iDebugLevel < 1);  // send to monitor who open debug mode
+                    //foreach (var s in sessions)
+                    //{
+                    //    string sRequest = @"<reply>NORMALLOG;" + typed.session.RemoteEndPoint.Address.ToString() + @"----" + typed.sToMonitor + "To " + sSQLRtnReason + @"</reply>";
+                    //    byte[] bRequest = Encoding.ASCII.GetBytes(sRequest);
+
+                    //    s.Send(bRequest, 0, bRequest.Length);
+                    //}
 
 
                 }

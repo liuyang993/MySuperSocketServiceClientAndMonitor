@@ -171,19 +171,16 @@ namespace RouterClient
             lbl_Client1TotalRecv.Text = client1.TotalRecvCounter.ToString();
 
 
-            //
+            // client 2 
 
             lbl_Client2HourSend.Text = client2.HourCounter.ToString();
             lbl_Client2DaySend.Text = client2.DayCounter.ToString();
             lbl_Client2TotalSend.Text = client2.TotalCounter.ToString();
 
-            lbl_Client3HourSend.Text = client3.HourCounter.ToString();
-            lbl_Client3DaySend.Text = client3.DayCounter.ToString();
-            lbl_Client3TotalSend.Text = client3.TotalCounter.ToString();
+            lbl_Client2HourRecv.Text = client2.HourRecvCounter.ToString();
+            lbl_Client2DayRecv.Text = client2.DayRecvCounter.ToString();
+            lbl_Client2TotalRecv.Text = client2.TotalRecvCounter.ToString();
 
-            lbl_Client4HourSend.Text = client4.HourCounter.ToString();
-            lbl_Client4DaySend.Text = client4.DayCounter.ToString();
-            lbl_Client4TotalSend.Text = client4.TotalCounter.ToString();
         }
     }
 }

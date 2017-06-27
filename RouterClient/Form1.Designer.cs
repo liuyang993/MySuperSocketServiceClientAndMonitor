@@ -56,9 +56,9 @@
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
             this.label43 = new System.Windows.Forms.Label();
-            this.label44 = new System.Windows.Forms.Label();
-            this.label45 = new System.Windows.Forms.Label();
-            this.label46 = new System.Windows.Forms.Label();
+            this.lbl_Client2TotalRecv = new System.Windows.Forms.Label();
+            this.lbl_Client2DayRecv = new System.Windows.Forms.Label();
+            this.lbl_Client2HourRecv = new System.Windows.Forms.Label();
             this.lbl_Client2TotalSend = new System.Windows.Forms.Label();
             this.lbl_Client2DaySend = new System.Windows.Forms.Label();
             this.lbl_Client2HourSend = new System.Windows.Forms.Label();
@@ -339,9 +339,9 @@
             this.panel2.Controls.Add(this.label41);
             this.panel2.Controls.Add(this.label42);
             this.panel2.Controls.Add(this.label43);
-            this.panel2.Controls.Add(this.label44);
-            this.panel2.Controls.Add(this.label45);
-            this.panel2.Controls.Add(this.label46);
+            this.panel2.Controls.Add(this.lbl_Client2TotalRecv);
+            this.panel2.Controls.Add(this.lbl_Client2DayRecv);
+            this.panel2.Controls.Add(this.lbl_Client2HourRecv);
             this.panel2.Controls.Add(this.lbl_Client2TotalSend);
             this.panel2.Controls.Add(this.lbl_Client2DaySend);
             this.panel2.Controls.Add(this.lbl_Client2HourSend);
@@ -411,32 +411,32 @@
             this.label43.TabIndex = 25;
             this.label43.Text = "label29";
             // 
-            // label44
+            // lbl_Client2TotalRecv
             // 
-            this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(137, 117);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(41, 13);
-            this.label44.TabIndex = 24;
-            this.label44.Text = "label29";
+            this.lbl_Client2TotalRecv.AutoSize = true;
+            this.lbl_Client2TotalRecv.Location = new System.Drawing.Point(137, 117);
+            this.lbl_Client2TotalRecv.Name = "lbl_Client2TotalRecv";
+            this.lbl_Client2TotalRecv.Size = new System.Drawing.Size(41, 13);
+            this.lbl_Client2TotalRecv.TabIndex = 24;
+            this.lbl_Client2TotalRecv.Text = "label29";
             // 
-            // label45
+            // lbl_Client2DayRecv
             // 
-            this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(137, 85);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(41, 13);
-            this.label45.TabIndex = 23;
-            this.label45.Text = "label45";
+            this.lbl_Client2DayRecv.AutoSize = true;
+            this.lbl_Client2DayRecv.Location = new System.Drawing.Point(137, 85);
+            this.lbl_Client2DayRecv.Name = "lbl_Client2DayRecv";
+            this.lbl_Client2DayRecv.Size = new System.Drawing.Size(41, 13);
+            this.lbl_Client2DayRecv.TabIndex = 23;
+            this.lbl_Client2DayRecv.Text = "label45";
             // 
-            // label46
+            // lbl_Client2HourRecv
             // 
-            this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(137, 57);
-            this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(41, 13);
-            this.label46.TabIndex = 22;
-            this.label46.Text = "label29";
+            this.lbl_Client2HourRecv.AutoSize = true;
+            this.lbl_Client2HourRecv.Location = new System.Drawing.Point(137, 57);
+            this.lbl_Client2HourRecv.Name = "lbl_Client2HourRecv";
+            this.lbl_Client2HourRecv.Size = new System.Drawing.Size(41, 13);
+            this.lbl_Client2HourRecv.TabIndex = 22;
+            this.lbl_Client2HourRecv.Text = "label29";
             // 
             // lbl_Client2TotalSend
             // 
@@ -1186,9 +1186,9 @@
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label label42;
         private System.Windows.Forms.Label label43;
-        private System.Windows.Forms.Label label44;
-        private System.Windows.Forms.Label label45;
-        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.Label lbl_Client2TotalRecv;
+        private System.Windows.Forms.Label lbl_Client2DayRecv;
+        private System.Windows.Forms.Label lbl_Client2HourRecv;
         private System.Windows.Forms.Label lbl_Client2TotalSend;
         private System.Windows.Forms.Label lbl_Client2DaySend;
         private System.Windows.Forms.Label lbl_Client2HourSend;

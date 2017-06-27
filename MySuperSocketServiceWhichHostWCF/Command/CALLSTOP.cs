@@ -15,14 +15,14 @@ using System.Data.SqlTypes;
 namespace MyRouteService.Command
 {
 
-    public class OUTGOINGTRYSUCCESS : CommandBase<TCPSocketSession, StringRequestInfo>
+    public class CALLSTOP : CommandBase<TCPSocketSession, StringRequestInfo>
     {
         public override void ExecuteCommand(TCPSocketSession session, StringRequestInfo requestInfo)
         {
 
-            if (requestInfo.Parameters.Count() != CommonTools.OUTGOINGTRYSUCCESS_PARACOUNT)     //need 3 parameters
+            if (requestInfo.Parameters.Count() != CommonTools.CALLSTOP_PARACOUNT)     //need 3 parameters
             {
-                session.AppServer.Logger.Error("CustomLog CALLSTART PARAMETER MUST BE 7 , now is :" + requestInfo.Key + @":" + requestInfo.Body);
+                session.AppServer.Logger.Error("CustomLog CALLSTOP PARAMETER MUST BE 8 , now is :" + requestInfo.Key + @":" + requestInfo.Body);
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace MyRouteService.Command
             #endregion
 
 
-            string sReply = @"<reply>" + @"OUTGOINGTRYSUCCESS;" + strCallID + @"," + strNAPout + @",OK" + @"</reply>";
+            string sReply = @"<reply>" + @"CALLSTOPSUCCESS;" + strCallID + @"," + strNAPout + @",OK" + @"</reply>";
 
             byte[] rv = Encoding.ASCII.GetBytes(sReply);
 
@@ -67,18 +67,18 @@ namespace MyRouteService.Command
                 //Console.WriteLine("quick reply " + sReply + " {0} times", session.iTotalRecv);
                 cmdDetail.cmd_reply_time = DateTime.Now;
                 session.Send(rv, 0, rv.Length);    // reply OK first
-                sSendToMonitor = sSendToMonitor + "To " + "OUTGOINGTRYSUCCESSIsOK";
+                sSendToMonitor = sSendToMonitor + "To " + "CALLSTOPSUCCESSIsOK";
 
                 //throw  TODO  simulate send error  ; 
             }
             catch (Exception tc)           //for exampleTimeoutException
             {
                 cmdDetail.cmd_reply_time = DateTime.Now;
-                session.AppServer.Logger.Error("send OUTGOINGTRYSUCCESS ok back error");
+                session.AppServer.Logger.Error("send CALLSTOPSUCCESS ok back error");
                 //Console.WriteLine("send ROUTEREQUEST ok back error");    //when become service , will print this line in output window
                 cmdDetail.reply_content = sReply;
 
-                cmdDetail.err_reason = "send OUTGOINGTRYSUCCESS ok back time out";
+                cmdDetail.err_reason = "send CALLSTOPSUCCESS ok back time out";
                 //write log ， send what fail
 
                 ((TCPSocketServer)session.AppServer).CommandDetailList.Enqueue(cmdDetail);

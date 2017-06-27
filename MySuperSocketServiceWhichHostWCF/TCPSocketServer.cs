@@ -42,10 +42,56 @@ namespace MyRouteService
     }
 
 
+
+    public class availableRoutes
+    {
+        public int sequence { get; set; }
+        public string NAPName { get; set; }
+        public int vendorID { get; set; }
+        public string SRC { get; set; }
+        public string DST { get; set; }
+        public float RateFee { get; set; }
+        public float RateCost { get; set; }
+
+        public int priority { get; set; }
+        public int weight { get; set; }
+
+        public string prefix { get; set; }
+        public string prefixGrp { get; set; }
+
+        public Guid TGID { get; set; }
+        public Guid TID { get; set; }
+        public Guid EntryDetailID {get;set;}
+
+        public bool IfAlreadyTrying { get; set; }
+    }
+
+    public class OutgoingCallTringLists
+    {
+        public string CallID { get; set; }
+        public int customID { get; set;}
+        public Guid custAuthenID { get; set;}
+        public string regularSRC { get; set;}
+        public string regularDST { get; set;}
+
+        public string NAPIN { get; set; }
+        public string IPIN { get; set; }
+
+        public bool IsFirstTry { get; set; }
+        public bool IsNotLastTry { get; set; }
+
+        public List<availableRoutes> routeList {get;set;}
+
+    }
+
+
     public class TCPSocketServer : AppServer<TCPSocketSession>
     {
         public ConcurrentQueue<CommandDetail> CommandDetailList = null;    // ConcurrentQueue :  thread safe queue
         public int iTotalFinish = 0;
+
+        List<OutgoingCallTringLists> loctl = new List<OutgoingCallTringLists>();
+
 
         public class CacheQueueList                        // why exist this class ?  because alway stick to this word "Cache" ,  original deal with Command in TCPSession
         {
@@ -86,9 +132,13 @@ namespace MyRouteService
                         DataTable dt = new DataTable();
                         List<string> Paras = typed.commandParameter.Split(',').ToList<string>();
 
+                        //OutgoingCallTringLists myObject = null;
+                        //availableRoutes ar = null;
+
                         switch (typed.commandKey)
                         {
                             case "ROUTEREQUEST":
+                                { 
                                 comm.CommandText = "sp_api_route_request";
                                 comm.CommandType = System.Data.CommandType.StoredProcedure;
                                 comm.CommandTimeout = 300;
@@ -153,11 +203,20 @@ namespace MyRouteService
 
                                 comm.Parameters.Add(new SqlParameter()
                                 {
-                                    ParameterName = "@I_CustID",
+                                    ParameterName = "@O_CustID",
                                     SqlDbType = SqlDbType.Int,
                                     //Value =sSQLRtnMsg,
                                     Direction = ParameterDirection.Output,
                                     Size = 4
+                                });
+
+                                comm.Parameters.Add(new SqlParameter()
+                                {
+                                    ParameterName = "@O_CustAuthID",
+                                    SqlDbType = SqlDbType.UniqueIdentifier,
+                                    //Value =sSQLRtnMsg,
+                                    Direction = ParameterDirection.Output,
+                                    Size = 40
                                 });
 
                                 comm.Parameters.Add(new SqlParameter()
@@ -178,6 +237,12 @@ namespace MyRouteService
                                     Size = 30
                                 });
 
+
+                                string sql = CommonTools.CommandAsSql(comm);
+                                typed.session.AppServer.Logger.Info(sql);
+
+
+
                                 reader = comm.ExecuteReader();
 
                                 if (reader != null)
@@ -192,48 +257,423 @@ namespace MyRouteService
                                 sSQLRtnReason = comm.Parameters["@O_Reason"].Value.ToString();
                                 sSQLRtnSRC = comm.Parameters["@O_RegularSRC"].Value.ToString();
                                 sSQLRtnDST = comm.Parameters["@O_RegularDST"].Value.ToString();
-                                iSQLRtnCustID = int.Parse(comm.Parameters["@I_CustID"].Value.ToString());
+                                iSQLRtnCustID = int.Parse(comm.Parameters["@O_CustID"].Value.ToString());
 
+                                OutgoingCallTringLists octl = new OutgoingCallTringLists();
+                                octl.CallID = Paras[0];
+                                octl.NAPIN = Paras[3];
+                                octl.IPIN = Paras[4];
+                                octl.customID = iSQLRtnCustID;
+                                octl.custAuthenID = Guid.Parse(comm.Parameters["@O_CustAuthID"].Value.ToString());
+                                octl.regularSRC = sSQLRtnSRC;
+                                octl.regularDST = sSQLRtnDST;
+                                octl.IsFirstTry = true;
+                                octl.IsNotLastTry = true;
+
+                                octl.routeList = new List<availableRoutes>();
 
                                 sb.Append(@"ROUTEREQUEST;" + comm.Parameters["@I_Callid"].Value.ToString() + @"," + iSQLRtnCanAccept.ToString() + @"," + sSQLRtnReason + @",");
 
+
                                 for (int iDT = 0; iDT < dt.Rows.Count; iDT++)
                                 {
-                                    sb.Append(dt.Rows[iDT]["NAP"].ToString() + @"," + dt.Rows[iDT]["SRC"].ToString() + @"," + dt.Rows[iDT]["DST"].ToString() + @"," + dt.Rows[iDT]["RateFee"].ToString() + @"," + dt.Rows[iDT]["RateCost"].ToString()  + @",");
+                                    sb.Append(dt.Rows[iDT]["NAP"].ToString() + @"," + dt.Rows[iDT]["SRC"].ToString() + @"," + dt.Rows[iDT]["DST"].ToString() + @"," + dt.Rows[iDT]["RateFee"].ToString() + @"," + dt.Rows[iDT]["RateCost"].ToString() + @",");
+
+                                    availableRoutes AR = new availableRoutes();
+                                    AR.sequence = int.Parse(dt.Rows[iDT]["Seq"].ToString());
+                                    AR.NAPName = dt.Rows[iDT]["NAP"].ToString();
+                                    AR.vendorID = int.Parse(dt.Rows[iDT]["VendorID"].ToString());
+                                    AR.SRC = dt.Rows[iDT]["SRC"].ToString();
+                                    AR.DST = dt.Rows[iDT]["DST"].ToString();
+                                    AR.RateFee = float.Parse(dt.Rows[iDT]["RateFee"].ToString());
+                                    AR.RateCost = float.Parse(dt.Rows[iDT]["RateCost"].ToString());
+                                    AR.priority = int.Parse(dt.Rows[iDT]["Piority"].ToString());
+                                    AR.weight = int.Parse(dt.Rows[iDT]["Weight"].ToString());
+
+                                    AR.prefix = dt.Rows[iDT]["Prefix"].ToString();
+                                    AR.prefixGrp = dt.Rows[iDT]["PrefixGroup"].ToString();
+
+                                    AR.TGID = Guid.Parse(dt.Rows[iDT]["TGID"].ToString());
+                                    AR.TID = Guid.Parse(dt.Rows[iDT]["TID"].ToString());
+                                    AR.EntryDetailID = Guid.Parse(dt.Rows[iDT]["EntryDetailID"].ToString());
+                                    AR.IfAlreadyTrying = false;
+
+                                    octl.routeList.Add(AR);
                                 }
+
+                                ((TCPSocketServer)typed.session.AppServer).loctl.Add(octl);
 
                                 sb = sb.Remove(sb.Length - 1, 1);
 
+                        }
+
                                 break;
-                            case "CALLSTART":
-                                comm.CommandText = "sp_cmd_CALLSTART";
-                                comm.CommandType = System.Data.CommandType.StoredProcedure;
-                                comm.CommandTimeout = 300;
-
-                                comm.Parameters.Add(new SqlParameter()
+                            case "OUTGOINGTRYFAIL":
                                 {
-                                    ParameterName = "@I_CallID_A",
-                                    SqlDbType = SqlDbType.Int,
-                                    Value = 1,
-                                    Size = 4
-                                });
+                                    comm.CommandText = "sp_api_call_failed";
+                                    comm.CommandType = System.Data.CommandType.StoredProcedure;
+                                    comm.CommandTimeout = 300;
 
-                                comm.Parameters.Add(new SqlParameter()
-                                {
-                                    ParameterName = "@O_ErrCode",
-                                    SqlDbType = SqlDbType.Int,
-                                    Direction = ParameterDirection.Output,
-                                    Size = 4
-                                });
+                                    // search in OutgoingCallTringLists
+                                    //OutgoingCallTringLists myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(o.CallID.Any(io => io.Id == 2));
 
-                                comm.Parameters.Add(new SqlParameter()
+                                    OutgoingCallTringLists myObject = null;
+                                    availableRoutes ar = null;
+
+                                    myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(x => x.CallID == Paras[0]);
+
+                                    ar = myObject.routeList.FirstOrDefault(x => x.NAPName == Paras[3]);
+
+
+                                    if (ar != null)
+                                    {
+
+                                        Console.WriteLine("fail try nap {0}", Paras[3]);
+
+                                        ar.IfAlreadyTrying = true;
+
+
+                                        myObject.IsNotLastTry = false;
+                                        foreach (availableRoutes ar1 in myObject.routeList)
+                                        {
+                                            if (ar1.IfAlreadyTrying == false)
+                                                myObject.IsNotLastTry = true;
+
+                                        }
+
+                                        comm.Parameters.Add("@I_Callid", SqlDbType.NVarChar, 30);
+                                        comm.Parameters["@I_Callid"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Callid"].Value = Paras[0];
+                                        comm.Parameters.Add("@I_RegularSRC", SqlDbType.NVarChar, 30);
+                                        comm.Parameters["@I_RegularSRC"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_RegularSRC"].Value = myObject.regularSRC;
+                                        comm.Parameters.Add("@I_RegularDST", SqlDbType.NVarChar, 30);
+                                        comm.Parameters["@I_RegularDST"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_RegularDST"].Value = myObject.regularDST;
+                                        comm.Parameters.Add("@I_SRCNumOut", SqlDbType.NChar, 30);
+                                        comm.Parameters["@I_SRCNumOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_SRCNumOut"].Value = Paras[1];
+                                        comm.Parameters.Add("@I_DSTNumOut", SqlDbType.NChar, 30);
+                                        comm.Parameters["@I_DSTNumOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_DSTNumOut"].Value = Paras[2];
+                                        comm.Parameters.Add("@I_CustID", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_CustID"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_CustID"].Value = myObject.customID;
+                                        comm.Parameters.Add("@I_AuthIDIn", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_AuthIDIn"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_AuthIDIn"].Value = myObject.custAuthenID;
+                                        comm.Parameters.Add("@I_NAPIn", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_NAPIn"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_NAPIn"].Value = myObject.NAPIN;
+                                        comm.Parameters.Add("@I_IPIn", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_IPIn"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_IPIn"].Value = myObject.IPIN;
+                                        comm.Parameters.Add("@I_EntryDetailID", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_EntryDetailID"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_EntryDetailID"].Value = ar.EntryDetailID;
+                                        comm.Parameters.Add("@I_ByPrefix", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_ByPrefix"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_ByPrefix"].Value = ar.prefix;
+                                        comm.Parameters.Add("@I_ByPrefixGroup", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_ByPrefixGroup"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_ByPrefixGroup"].Value = ar.prefixGrp;
+                                        comm.Parameters.Add("@I_VendorID", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_VendorID"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_VendorID"].Value = ar.vendorID;
+                                        comm.Parameters.Add("@I_TGIDOut", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_TGIDOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_TGIDOut"].Value = ar.TGID;
+                                        comm.Parameters.Add("@I_TIDOut", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_TIDOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_TIDOut"].Value = ar.TID;
+                                        comm.Parameters.Add("@I_NAPOut", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_NAPOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_NAPOut"].Value = ar.NAPName;
+                                        comm.Parameters.Add("@I_IPOut", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_IPOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_IPOut"].Value = Paras[4];
+                                        comm.Parameters.Add("@I_SetupTime", SqlDbType.DateTime, 8);
+                                        comm.Parameters["@I_SetupTime"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_SetupTime"].Value = Paras[5];
+                                        comm.Parameters.Add("@I_Connecttime", SqlDbType.DateTime, 8);
+                                        comm.Parameters["@I_Connecttime"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Connecttime"].Value = Paras[6];
+                                        comm.Parameters.Add("@I_Disconnecttime", SqlDbType.DateTime, 8);
+                                        comm.Parameters["@I_Disconnecttime"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Disconnecttime"].Value = Paras[7];
+
+
+                                        comm.Parameters.Add("@I_FlagIsFirstTry", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_FlagIsFirstTry"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_FlagIsFirstTry"].Value = myObject.IsFirstTry ? 1 : 0;
+
+                                        comm.Parameters.Add("@I_FlagNotLastTry", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_FlagNotLastTry"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_FlagNotLastTry"].Value = myObject.IsNotLastTry ? 1 : 0;
+
+
+
+                                        comm.Parameters.Add("@I_FlagFailedButConnect", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_FlagFailedButConnect"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_FlagFailedButConnect"].Value = 0;
+                                        comm.Parameters.Add("@I_FlagFailedButConnectOut", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_FlagFailedButConnectOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_FlagFailedButConnectOut"].Value = 0;
+                                        comm.Parameters.Add("@I_Duration", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_Duration"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Duration"].Value = 1;
+                                        comm.Parameters.Add("@I_Fee", SqlDbType.Decimal, 9);
+                                        comm.Parameters["@I_Fee"].Precision = 18;
+                                        comm.Parameters["@I_Fee"].Scale = 8;
+                                        comm.Parameters["@I_Fee"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Fee"].Value = 0.01;
+                                        comm.Parameters.Add("@I_Cost", SqlDbType.Decimal, 9);
+                                        comm.Parameters["@I_Cost"].Precision = 18;
+                                        comm.Parameters["@I_Cost"].Scale = 8;
+                                        comm.Parameters["@I_Cost"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Cost"].Value = 0.009;
+                                        comm.Parameters.Add("@O_ErrCode", SqlDbType.Int, 4);
+                                        comm.Parameters["@O_ErrCode"].Direction = ParameterDirection.Output;
+                                        comm.Parameters.Add("@O_Msg", SqlDbType.NVarChar, 200);
+                                        comm.Parameters["@O_Msg"].Direction = ParameterDirection.Output;
+                                        comm.Parameters.Add("@RETURN_VALUE", SqlDbType.Int, 4);
+                                        comm.Parameters["@RETURN_VALUE"].Direction = ParameterDirection.ReturnValue;
+
+
+                                        string sql = CommonTools.CommandAsSql(comm);
+                                        typed.session.AppServer.Logger.Info(sql);
+
+                                        comm.ExecuteNonQuery();
+
+                                        myObject.IsFirstTry = false;
+
+                                        int O_ErrCode = Convert.ToInt32(comm.Parameters["@O_ErrCode"].Value.ToString());
+                                        string O_Msg = comm.Parameters["@O_Msg"].Value.ToString();
+
+                                        //reader = comm.ExecuteReader();
+
+                                    }
+                                }
+
+                                break;
+                            
+                            case "OUTGOINGTRYSUCCESS":
                                 {
-                                    ParameterName = "@O_Msg",
-                                    SqlDbType = SqlDbType.VarChar,
-                                    //Value =sSQLRtnMsg,
-                                    Direction = ParameterDirection.Output,
-                                    Size = 1000
-                                });
+                                    OutgoingCallTringLists myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(x => x.CallID == Paras[0]);
+
+                                    availableRoutes ar = myObject.routeList.FirstOrDefault(x => x.NAPName == Paras[3]);
+
+
+                                    if (ar != null)
+                                    {
+
+                                        Console.WriteLine("success try nap {0}", Paras[3]);
+
+                                        ar.IfAlreadyTrying = true;
+
+                                        comm.CommandText = "sp_api_acc_start";
+                                        comm.CommandType = System.Data.CommandType.StoredProcedure;
+                                        comm.CommandTimeout = 300;
+
+                                        comm.Parameters.Add("@I_Callid", SqlDbType.NVarChar, 30);
+                                        comm.Parameters["@I_Callid"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Callid"].Value = Paras[0];
+                                        comm.Parameters.Add("@I_RegularSRC", SqlDbType.NVarChar, 30);
+                                        comm.Parameters["@I_RegularSRC"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_RegularSRC"].Value = myObject.regularSRC;
+                                        comm.Parameters.Add("@I_RegularDST", SqlDbType.NVarChar, 30);
+                                        comm.Parameters["@I_RegularDST"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_RegularDST"].Value = myObject.regularDST;
+                                        comm.Parameters.Add("@I_SRCNumOut", SqlDbType.NChar, 30);
+                                        comm.Parameters["@I_SRCNumOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_SRCNumOut"].Value = Paras[1];
+                                        comm.Parameters.Add("@I_DSTNumOut", SqlDbType.NChar, 30);
+                                        comm.Parameters["@I_DSTNumOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_DSTNumOut"].Value = Paras[2];
+                                        comm.Parameters.Add("@I_CustID", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_CustID"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_CustID"].Value = myObject.customID;
+                                        comm.Parameters.Add("@I_AuthIDIn", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_AuthIDIn"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_AuthIDIn"].Value = myObject.custAuthenID;
+                                        comm.Parameters.Add("@I_NAPIn", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_NAPIn"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_NAPIn"].Value = myObject.NAPIN;
+                                        comm.Parameters.Add("@I_IPIn", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_IPIn"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_IPIn"].Value = myObject.IPIN;
+                                        comm.Parameters.Add("@I_EntryDetailID", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_EntryDetailID"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_EntryDetailID"].Value = ar.EntryDetailID;
+                                        comm.Parameters.Add("@I_ByPrefix", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_ByPrefix"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_ByPrefix"].Value = ar.prefix;
+                                        comm.Parameters.Add("@I_ByPrefixGroup", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_ByPrefixGroup"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_ByPrefixGroup"].Value = ar.prefixGrp;
+                                        comm.Parameters.Add("@I_VendorID", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_VendorID"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_VendorID"].Value = ar.vendorID;
+                                        comm.Parameters.Add("@I_TGIDOut", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_TGIDOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_TGIDOut"].Value = ar.TGID;
+                                        comm.Parameters.Add("@I_TIDOut", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_TIDOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_TIDOut"].Value = ar.TID;
+                                        comm.Parameters.Add("@I_NAPOut", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_NAPOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_NAPOut"].Value = ar.NAPName;
+                                        comm.Parameters.Add("@I_IPOut", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_IPOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_IPOut"].Value = Paras[4];
+                                        comm.Parameters.Add("@I_SetupTime", SqlDbType.DateTime, 8);
+                                        comm.Parameters["@I_SetupTime"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_SetupTime"].Value = Paras[5];
+                                        comm.Parameters.Add("@I_Connecttime", SqlDbType.DateTime, 8);
+                                        comm.Parameters["@I_Connecttime"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Connecttime"].Value = Paras[6];
+                                        comm.Parameters.Add("@I_IsFirst", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_IsFirst"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_IsFirst"].Value = myObject.IsFirstTry ? 1 : 0;
+                                        comm.Parameters.Add("@O_ErrCode", SqlDbType.Int, 4);
+                                        comm.Parameters["@O_ErrCode"].Direction = ParameterDirection.Output;
+                                        comm.Parameters.Add("@O_Msg", SqlDbType.NVarChar, 200);
+                                        comm.Parameters["@O_Msg"].Direction = ParameterDirection.Output;
+
+                                        string sql = CommonTools.CommandAsSql(comm);
+                                        typed.session.AppServer.Logger.Info(sql);
+
+                                        comm.ExecuteNonQuery();
+
+
+                                        //2017-6-26   find return null
+
+                                        //int O_ErrCode = Convert.ToInt32(comm.Parameters["@O_ErrCode"].Value.ToString());
+                                        //string O_Msg = comm.Parameters["@O_Msg"].Value.ToString();
+                                    }
+
+                                }
+
+                                break;
+                            case "CALLSTOP":
+                                {
+                                    OutgoingCallTringLists myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(x => x.CallID == Paras[0]);
+
+                                    availableRoutes ar = myObject.routeList.FirstOrDefault(x => x.NAPName == Paras[3]);
+
+
+                                    if (ar != null)
+                                    {
+
+                                        Console.WriteLine("call stop by nap {0}", Paras[3]);
+
+                                        comm.CommandText = "sp_api_acc_stop";
+                                        comm.CommandType = System.Data.CommandType.StoredProcedure;
+                                        comm.CommandTimeout = 300;
+
+
+                                        comm.Parameters.Add("@I_Callid", SqlDbType.NVarChar, 30);
+                                        comm.Parameters["@I_Callid"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Callid"].Value = Paras[0];
+                                        comm.Parameters.Add("@I_RegularSRC", SqlDbType.NVarChar, 30);
+                                        comm.Parameters["@I_RegularSRC"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_RegularSRC"].Value = myObject.regularSRC;
+                                        comm.Parameters.Add("@I_RegularDST", SqlDbType.NVarChar, 30);
+                                        comm.Parameters["@I_RegularDST"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_RegularDST"].Value = myObject.regularDST;
+                                        comm.Parameters.Add("@I_SRCNumOut", SqlDbType.NChar, 30);
+                                        comm.Parameters["@I_SRCNumOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_SRCNumOut"].Value = Paras[1];
+                                        comm.Parameters.Add("@I_DSTNumOut", SqlDbType.NChar, 30);
+                                        comm.Parameters["@I_DSTNumOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_DSTNumOut"].Value = Paras[2];
+                                        comm.Parameters.Add("@I_CustID", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_CustID"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_CustID"].Value = myObject.customID;
+                                        comm.Parameters.Add("@I_AuthIDIn", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_AuthIDIn"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_AuthIDIn"].Value = myObject.custAuthenID;
+                                        comm.Parameters.Add("@I_NAPIn", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_NAPIn"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_NAPIn"].Value = myObject.NAPIN;
+                                        comm.Parameters.Add("@I_IPIn", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_IPIn"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_IPIn"].Value = myObject.IPIN;
+                                        comm.Parameters.Add("@I_EntryDetailID", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_EntryDetailID"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_EntryDetailID"].Value = ar.EntryDetailID;
+                                        comm.Parameters.Add("@I_ByPrefix", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_ByPrefix"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_ByPrefix"].Value = ar.prefix;
+                                        comm.Parameters.Add("@I_ByPrefixGroup", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_ByPrefixGroup"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_ByPrefixGroup"].Value = ar.prefixGrp;
+                                        comm.Parameters.Add("@I_VendorID", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_VendorID"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_VendorID"].Value = ar.vendorID;
+                                        comm.Parameters.Add("@I_TGIDOut", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_TGIDOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_TGIDOut"].Value = ar.TGID;
+                                        comm.Parameters.Add("@I_TIDOut", SqlDbType.UniqueIdentifier, 16);
+                                        comm.Parameters["@I_TIDOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_TIDOut"].Value = ar.TID;
+                                        comm.Parameters.Add("@I_NAPOut", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_NAPOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_NAPOut"].Value = ar.NAPName;
+                                        comm.Parameters.Add("@I_IPOut", SqlDbType.NVarChar, 50);
+                                        comm.Parameters["@I_IPOut"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_IPOut"].Value = Paras[4];
+                                        comm.Parameters.Add("@I_SetupTime", SqlDbType.DateTime, 8);
+                                        comm.Parameters["@I_SetupTime"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_SetupTime"].Value = Paras[5];
+                                        comm.Parameters.Add("@I_Connecttime", SqlDbType.DateTime, 8);
+                                        comm.Parameters["@I_Connecttime"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Connecttime"].Value = Paras[6];
+                                        comm.Parameters.Add("@I_Disconnecttime", SqlDbType.DateTime, 8);
+                                        comm.Parameters["@I_Disconnecttime"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Disconnecttime"].Value = Paras[7];
+                                        comm.Parameters.Add("@I_Duration", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_Duration"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Duration"].Value = Paras[8];
+                                        comm.Parameters.Add("@I_Fee", SqlDbType.Decimal, 9);
+                                        comm.Parameters["@I_Fee"].Precision = 18;
+                                        comm.Parameters["@I_Fee"].Scale = 8;
+                                        comm.Parameters["@I_Fee"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Fee"].Value = 0.001;
+                                        comm.Parameters.Add("@I_Cost", SqlDbType.Decimal, 9);
+                                        comm.Parameters["@I_Cost"].Precision = 18;
+                                        comm.Parameters["@I_Cost"].Scale = 8;
+                                        comm.Parameters["@I_Cost"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_Cost"].Value = 0.0009;
+                                        comm.Parameters.Add("@I_FlagIsFirstTry", SqlDbType.Int, 4);
+                                        comm.Parameters["@I_FlagIsFirstTry"].Direction = ParameterDirection.Input;
+                                        comm.Parameters["@I_FlagIsFirstTry"].Value = 0;
+                                        comm.Parameters.Add("@O_ErrCode", SqlDbType.Int, 4);
+                                        comm.Parameters["@O_ErrCode"].Direction = ParameterDirection.Output;
+                                        comm.Parameters.Add("@O_Msg", SqlDbType.NVarChar, 200);
+                                        comm.Parameters["@O_Msg"].Direction = ParameterDirection.Output;
+                                        comm.Parameters.Add("@RETURN_VALUE", SqlDbType.Int, 4);
+                                        comm.Parameters["@RETURN_VALUE"].Direction = ParameterDirection.ReturnValue;
+                                        //if (conn.State == ConnectionState.Closed)
+                                        //    conn.Open();
+
+
+                                        string sql = CommonTools.CommandAsSql(comm);
+                                        typed.session.AppServer.Logger.Info(sql);
+
+                                        comm.ExecuteNonQuery();
+
+
+
+                                        //2017-6-26   find return null
+
+                                        //int O_ErrCode = Convert.ToInt32(comm.Parameters["@O_ErrCode"].Value.ToString());
+                                        //string O_Msg = comm.Parameters["@O_Msg"].Value.ToString();
+                                    }
+
+
+
+                                }
                                 break;
                             default:
                                 break;
@@ -267,17 +707,17 @@ namespace MyRouteService
                 {
                     //if (typed.session.Connected)
                     //{
-                        typed.session.Send(rv, 0, rv.Length);
-                        //Console.WriteLine(sReply + @"---------" + ts.iTotalFinish.ToString());
-                        //ts.iTotalFinish++;
+                    typed.cDetail.reply_content = sReply;
+                    typed.cDetail.cmd_reply_time = DateTime.Now;
+
+
+                    typed.session.Send(rv, 0, rv.Length);
+                    //Console.WriteLine(sReply + @"---------" + ts.iTotalFinish.ToString());
+                    //ts.iTotalFinish++;
 
                     //}
 
-
-                    //typed.cDetail.reply_content = sReply;
-                    //typed.cDetail.cmd_reply_time = DateTime.Now;
-
-                    //ts.CommandDetailList.Enqueue(typed.cDetail);
+                    ts.CommandDetailList.Enqueue(typed.cDetail);
 
                     //var sessions = ts.GetSessions(s => s.bIfMonitorClient == true && s.iDebugLevel < 1);  // send to monitor who open debug mode
                     //foreach (var s in sessions)
@@ -325,7 +765,7 @@ namespace MyRouteService
 
 
             // timer to record income and outgoing command into DB
-            //_timer = new System.Threading.Timer(new TimerCallback(JobCallBack), null, 0, 5000);
+            _timer = new System.Threading.Timer(new TimerCallback(JobCallBack), null, 0, 5000);
 
         }
 

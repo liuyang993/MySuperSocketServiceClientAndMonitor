@@ -17,33 +17,31 @@ namespace MyRouteService.Command
 
     public class ROUTEREQUEST : CommandBase<TCPSocketSession, StringRequestInfo>
     {
-        //static int CmdCount = 0;
 
         public override void ExecuteCommand(TCPSocketSession session, StringRequestInfo requestInfo)
         {
-            //Thread.Sleep(100);
+            
+            if (requestInfo.Parameters.Count() != CommonTools.ROUTEREQUEST_PARACOUNT)
+            {
+                // if need send back  TODO       session.Send("The wrong format\r\n");
+                session.AppServer.Logger.Error("CustomLog ROUTEREQUEST PARAMETER MUST BE 5 , now is :" + requestInfo.Key + @":" + requestInfo.Body);
+                return;
+            }
+
             CommandDetail cmdDetail = new CommandDetail();
             cmdDetail.requestID = Guid.NewGuid().ToString();
-            //cmdDetail.requestID = "ABCD";
             cmdDetail.sessionIP = session.RemoteEndPoint.ToString();
             cmdDetail.sessionID = session.SessionID;
             cmdDetail.commandName = this.Name;
             cmdDetail.cmd_recv_time = DateTime.Now;
             cmdDetail.cmd_content = requestInfo.Key + @":" + requestInfo.Body;
-            //now cmdDetail only left reply content and err reason
-
-            if (requestInfo.Parameters.Count() != 5)
-            {
-                // if need send back  TODO       session.Send("The wrong format\r\n");
-                session.AppServer.Logger.Error("CustomLog ROUTEREQUEST PARAMETER MUST BE 2 , now is :" + requestInfo.Key + @":" + requestInfo.Body);
-                return;
-            }
+            //now cmdDetail only left reply content and err reason is empty
 
             string strCallID = requestInfo.Parameters[0].ToString();
 
 
             session.iTotalRecv++;
-            string sSendToMonitor = null;
+
             #region SaveRequestIntoSQL
 
             // using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
@@ -126,10 +124,9 @@ namespace MyRouteService.Command
 
             #endregion
 
+            string sSendToMonitor  = "From " + requestInfo.Key + @":" + requestInfo.Body;
 
-            sSendToMonitor = "From " + requestInfo.Key + @":" + requestInfo.Body;
-
-            // new methoc use tcpserver cache 
+            #region new methoc use tcpserver cache 
 
             CacheItem ci = new CacheItem();
             ci.session = session;
@@ -141,11 +138,11 @@ namespace MyRouteService.Command
             if (!((TCPSocketServer)session.AppServer).cacheList.enQueue(ci))
             {
                 Console.WriteLine("cache have full");
+                //TODO  :  if queue is full , what about this request , return will lose it 
                 return;
             }
 
-
-            // end new methoc use tcpserver cache 
+            #endregion
 
             string sReply = @"<reply>" + @"ROUTEREQUEST;" + strCallID + @",GetNapRouteIsOK" + @"</reply>";
             byte[] rv = Encoding.ASCII.GetBytes(sReply);
@@ -162,7 +159,8 @@ namespace MyRouteService.Command
             catch (Exception tc)           //for exampleTimeoutException
             {
                 cmdDetail.cmd_reply_time = DateTime.Now;
-                Console.WriteLine("send ROUTEREQUEST ok back error");    //when become service , will auto skip this line
+                session.AppServer.Logger.Error("send ROUTEREQUEST ok back error");
+                //Console.WriteLine("send ROUTEREQUEST ok back error");    //when become service , will print this line in output window
                 cmdDetail.reply_content = sReply;
 
                 cmdDetail.err_reason = "send ROUTEREQUEST ok back time out";
@@ -192,18 +190,23 @@ namespace MyRouteService.Command
             //put all parameter into one class     2017-6-1  temp comment
 
 
-
-
-
-
-
             return;
 
-            //20170522
+        }
 
-            #region prove original is single thread
+
+        public void ThreadWhichWillCallSQL(Object o1)
+        {
+            ////Interlocked.Increment(ref CmdCount);
+
+            //classParameterSessionAndRequestID typed = (classParameterSessionAndRequestID)o1;
+
+            ////Interlocked.Decrement(ref ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
+            ////Console.WriteLine("still have {0} threads pending.", ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
+
             //string sSQLRtnMsg = null;
 
+            //#region callsql
             //using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
             //{
             //    try
@@ -220,7 +223,7 @@ namespace MyRouteService.Command
             //        {
             //            ParameterName = "@I_CallID_A",
             //            SqlDbType = SqlDbType.Int,
-            //            Value = 1,
+            //            Value = typed.para1,
             //            Size = 4
             //        });
 
@@ -247,187 +250,66 @@ namespace MyRouteService.Command
             //    }
             //    catch (Exception uep)
             //    {
+            //        //区别 数据库下线还是存储过程出错  TODO 
             //        //记录 request and  出错原因
             //        Console.WriteLine("get NAP call SQL error");
-            //        cmdDetail.cmd_reply_time = DateTime.Now;
-            //        cmdDetail.reply_content = uep.Message;
+            //        typed.cmdDetail.cmd_reply_time = DateTime.Now;
+            //        typed.cmdDetail.reply_content = uep.Message;
+            //        ((TCPSocketServer)typed.ts.AppServer).CommandDetailList.Enqueue(typed.cmdDetail);
 
-            //        ((TCPSocketServer)session.AppServer).CommandDetailList.Enqueue(cmdDetail);
+            //        typed.sToMonitor = @"<reply>NORMALLOG@" + typed.sToMonitor + @". error:call sp wrong ,  reason is : " + uep.Message + @".</reply>";
 
-            //        sSendToMonitor = @"<reply>NORMALLOG@" + sSendToMonitor + @". error:call sp wrong ,  reason is : " + uep.Message + @".</reply>";
-
-            //        CommonTools.SendToEveryMonitor(sSendToMonitor, session);
+            //        CommonTools.SendToEveryMonitor(typed.sToMonitor, typed.ts);
 
             //        return;
             //    }
             //}   //using
 
+            //#endregion
 
-            // sReply = @"<reply>" + sSQLRtnMsg + @"</reply>";
+            //string sReply = @"<reply>" + sSQLRtnMsg + @"</reply>";
 
-            //byte[] rv1 = Encoding.ASCII.GetBytes(sReply);
+            //byte[] rv = Encoding.ASCII.GetBytes(sReply);
 
             //try
             //{
-            //    //Console.WriteLine(sReply + @"---------" + typed.ts.iTotalFinish.ToString());
-            //    if (session.Connected)
-            //        session.Send(rv, 0, rv.Length);   // reply OK first
+            //    //if (typed.ts.Connected)
+            //    //{
+            //        typed.ts.Send(rv, 0, rv.Length);
+            //        //Console.WriteLine(sReply + @"---------" + typed.ts.iTotalFinish.ToString());
 
-            //    cmdDetail.reply_content = sReply;
-            //    cmdDetail.cmd_reply_time = DateTime.Now;
+            //        //typed.ts.SocketSession.Client.Send(rv);
 
-            //    ((TCPSocketServer)session.AppServer).CommandDetailList.Enqueue(cmdDetail);
 
-            //    var sessions = session.AppServer.GetSessions(s => s.bIfMonitorClient == true && s.iDebugLevel < 1);  // send to monitor who open debug mode
-            //    foreach (var s in sessions)
-            //    {
-            //        string sRequest = @"<reply>NORMALLOG@" + session.RemoteEndPoint.Address.ToString() + @"----" + sSendToMonitor + "To " + sSQLRtnMsg + @"</reply>";
-            //        byte[] bRequest = Encoding.ASCII.GetBytes(sRequest);
+            //    //}
+            //    //typed.cmdDetail.reply_content = sReply;
+            //    //typed.cmdDetail.cmd_reply_time = DateTime.Now;
 
-            //        s.Send(bRequest, 0, bRequest.Length);
-            //    }
+            //    //((TCPSocketServer)typed.ts.AppServer).CommandDetailList.Enqueue(typed.cmdDetail);
 
-            //    Thread.BeginCriticalRegion();
-            //    session.iTotalFinish++;          // total handle +1
-            //    //Console.WriteLine("total reply {0} " + typed.ts.iTotalFinish);
-            //    Thread.EndCriticalRegion();
+            //    //var sessions = typed.ts.AppServer.GetSessions(s => s.bIfMonitorClient == true && s.iDebugLevel < 1);  // send to monitor who open debug mode
+            //    //foreach (var s in sessions)
+            //    //{
+            //    //    string sRequest = @"<reply>NORMALLOG@" + typed.ts.RemoteEndPoint.Address.ToString() + @"----" + typed.sToMonitor + "To " + sSQLRtnMsg + @"</reply>";
+            //    //    byte[] bRequest = Encoding.ASCII.GetBytes(sRequest);
+
+            //    //    s.Send(bRequest, 0, bRequest.Length);
+            //    //}
+
+            //    //Thread.BeginCriticalRegion();
+            //    //typed.ts.iTotalFinish++;          // total handle +1
+            //    ////Console.WriteLine("total reply {0} " + typed.ts.iTotalFinish);
+            //    //Thread.EndCriticalRegion();
 
 
             //}
             //catch (Exception tc)   //TimeoutException
             //{
-            //    Console.WriteLine("there happen error");
+            //    Console.WriteLine("there happen error " + tc.Message);
             //    return;
             //}
 
             //return;
-            #endregion
-
-        }
-
-        public void ThreadWhichWillCallSQL_test(Object o1)
-        {
-            Thread.Sleep(5000);
-            Console.WriteLine("thread func finish");
-            return;
-        }
-
-
-        public void ThreadWhichWillCallSQL(Object o1)
-        {
-            //Interlocked.Increment(ref CmdCount);
-
-            classParameterSessionAndRequestID typed = (classParameterSessionAndRequestID)o1;
-
-            //Interlocked.Decrement(ref ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
-            //Console.WriteLine("still have {0} threads pending.", ((TCPSocketServer)typed.ts.AppServer).iPendingThread);
-
-            string sSQLRtnMsg = null;
-
-            #region callsql
-            using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
-            {
-                try
-                {
-                    conn.Open();
-
-                    SqlCommand comm = conn.CreateCommand();
-                    comm.CommandText = "sp_Test_alwayRetTrue";
-                    comm.CommandType = System.Data.CommandType.StoredProcedure;
-                    comm.CommandTimeout = 300;
-
-
-                    comm.Parameters.Add(new SqlParameter()
-                    {
-                        ParameterName = "@I_CallID_A",
-                        SqlDbType = SqlDbType.Int,
-                        Value = typed.para1,
-                        Size = 4
-                    });
-
-                    comm.Parameters.Add(new SqlParameter()
-                    {
-                        ParameterName = "@O_ErrCode",
-                        SqlDbType = SqlDbType.Int,
-                        Direction = ParameterDirection.Output,
-                        Size = 4
-                    });
-
-                    comm.Parameters.Add(new SqlParameter()
-                    {
-                        ParameterName = "@O_Msg",
-                        SqlDbType = SqlDbType.VarChar,
-                        //Value =sSQLRtnMsg,
-                        Direction = ParameterDirection.Output,
-                        Size = 1000
-                    });
-
-                    comm.ExecuteNonQuery();
-
-                    sSQLRtnMsg = comm.Parameters["@O_Msg"].Value.ToString();
-                }
-                catch (Exception uep)
-                {
-                    //区别 数据库下线还是存储过程出错  TODO 
-                    //记录 request and  出错原因
-                    Console.WriteLine("get NAP call SQL error");
-                    typed.cmdDetail.cmd_reply_time = DateTime.Now;
-                    typed.cmdDetail.reply_content = uep.Message;
-                    ((TCPSocketServer)typed.ts.AppServer).CommandDetailList.Enqueue(typed.cmdDetail);
-
-                    typed.sToMonitor = @"<reply>NORMALLOG@" + typed.sToMonitor + @". error:call sp wrong ,  reason is : " + uep.Message + @".</reply>";
-
-                    CommonTools.SendToEveryMonitor(typed.sToMonitor, typed.ts);
-
-                    return;
-                }
-            }   //using
-
-            #endregion
-
-            string sReply = @"<reply>" + sSQLRtnMsg + @"</reply>";
-
-            byte[] rv = Encoding.ASCII.GetBytes(sReply);
-
-            try
-            {
-                //if (typed.ts.Connected)
-                //{
-                    typed.ts.Send(rv, 0, rv.Length);
-                    //Console.WriteLine(sReply + @"---------" + typed.ts.iTotalFinish.ToString());
-
-                    //typed.ts.SocketSession.Client.Send(rv);
-
-
-                //}
-                //typed.cmdDetail.reply_content = sReply;
-                //typed.cmdDetail.cmd_reply_time = DateTime.Now;
-
-                //((TCPSocketServer)typed.ts.AppServer).CommandDetailList.Enqueue(typed.cmdDetail);
-
-                //var sessions = typed.ts.AppServer.GetSessions(s => s.bIfMonitorClient == true && s.iDebugLevel < 1);  // send to monitor who open debug mode
-                //foreach (var s in sessions)
-                //{
-                //    string sRequest = @"<reply>NORMALLOG@" + typed.ts.RemoteEndPoint.Address.ToString() + @"----" + typed.sToMonitor + "To " + sSQLRtnMsg + @"</reply>";
-                //    byte[] bRequest = Encoding.ASCII.GetBytes(sRequest);
-
-                //    s.Send(bRequest, 0, bRequest.Length);
-                //}
-
-                //Thread.BeginCriticalRegion();
-                //typed.ts.iTotalFinish++;          // total handle +1
-                ////Console.WriteLine("total reply {0} " + typed.ts.iTotalFinish);
-                //Thread.EndCriticalRegion();
-
-
-            }
-            catch (Exception tc)   //TimeoutException
-            {
-                Console.WriteLine("there happen error " + tc.Message);
-                return;
-            }
-
-            return;
         }
 
 

@@ -12,11 +12,39 @@ using System.Threading.Tasks;
 
 namespace RouterClient
 {
+    enum CallState
+    {
+        FullFail, Success, FailCozInterrupt
+    }
+
+    public class availableRoutes
+    {
+        public string NAPName { get; set; }
+        public string SRC { get; set; }
+        public string DST { get; set; }
+        public bool IfAlreadyTry { get; set; }
+
+        public bool IfSuccess { get; set; }
+        public DateTime SuccessTime { get; set; }
+
+    }
+    public class OutgoingCallTringLists
+    {
+        public string CallID { get; set; }
+
+        public List<availableRoutes> routeList { get; set; }
+
+    }
+
+
+
     public class RClient : MyThread2
     {
         private int mID;
         private int mMaxCalls;
         private  SortedList<string, RRequest> mPendingRequests = new SortedList<string, RRequest>();
+
+        private List<OutgoingCallTringLists> loctl = new List<OutgoingCallTringLists>();
 
         private EasyClient client;
 
@@ -71,43 +99,112 @@ namespace RouterClient
                 }
             }
 
+            //
+            if ((sHead == "ROUTEREQUEST")&&(sReply.Length>100))
+            {
+                List<string> Paras = sReply.Split(',').ToList<string>();
+                int iLoop = (Paras.Count - 3) / 5;
+
+                OutgoingCallTringLists octl = new OutgoingCallTringLists();
+                octl.routeList = new List<availableRoutes>();
+
+                octl.CallID = Paras[0];
+
+                for (int i =0; i < iLoop;i++)
+                {
+                    availableRoutes ar = new availableRoutes();
+                        ar.NAPName = Paras[i * 5 + 3];
+                        ar.SRC= Paras[i * 5 + 4];
+                        ar.DST= Paras[i * 5 + 5];
+                    ar.IfAlreadyTry = false;
+                    ar.IfSuccess = false;
+                    ar.SuccessTime = DateTime.MinValue;
+                    octl.routeList.Add(ar);
+                }
+
+                loctl.Add(octl);
+
+                Array values = Enum.GetValues(typeof(CallState));
+                Random random = new Random();
+                CallState randomBar = (CallState)values.GetValue(random.Next(values.Length));
+
+                switch (randomBar)
+                {
+                    case (CallState.FullFail):
+                        {
+                            for (int j = 0; j < octl.routeList.Count; j++)
+                            {
+                                string sTrySend = @"<cmd>OUTGOINGTRYFAIL;" + octl.CallID + @"," + octl.routeList[j].SRC + @"," + octl.routeList[j].DST + @"," + octl.routeList[j].NAPName + @",12.34.56.789" + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"</cmd>";
+
+                                byte[] bData = Encoding.ASCII.GetBytes(sTrySend);
+                                client.Send(bData);
+                            }
+
+                            loctl.Remove(octl);
+
+                        }
+                        break;
+                    case (CallState.Success):
+                        {
+                            // make a randome number , decide which time trying will success
+                            Random r = new Random();
+                            int rInt = r.Next(0, octl.routeList.Count - 1);
+
+                            if (rInt == 0)   // mean success from the first trying 
+                            {
+                                string sTrySend = @"<cmd>OUTGOINGTRYSUCCESS;" + octl.CallID + @"," + octl.routeList[0].SRC + @"," + octl.routeList[0].DST + @"," + octl.routeList[0].NAPName + @",12.34.56.789" + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"</cmd>";
+                                byte[] bData = Encoding.ASCII.GetBytes(sTrySend);
+                                client.Send(bData);
+                            }
+                            else
+                            {
+                                for (int j = 0; j < rInt; j++)
+                                {
+                                    string sTrySend = @"<cmd>OUTGOINGTRYFAIL;" + octl.CallID + @"," + octl.routeList[j].SRC + @"," + octl.routeList[j].DST + @"," + octl.routeList[j].NAPName + @",12.34.56.789" + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"</cmd>";
+
+                                    byte[] bData = Encoding.ASCII.GetBytes(sTrySend);
+                                    client.Send(bData);
+                                }
+
+                                string sTrySendFinal = @"<cmd>OUTGOINGTRYSUCCESS;" + octl.CallID + @"," + octl.routeList[rInt].SRC + @"," + octl.routeList[rInt].DST + @"," + octl.routeList[rInt].NAPName + @",12.34.56.789" + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"</cmd>";
+
+                                byte[] bDataFinal = Encoding.ASCII.GetBytes(sTrySendFinal);
+
+                                octl.routeList[rInt].IfSuccess = true;
+                                octl.routeList[rInt].SuccessTime = DateTime.Now;
+
+                                client.Send(bDataFinal);
+
+                            }
+                        }
+                        break;
+                    case (CallState.FailCozInterrupt):
+                        {
+                            Random r = new Random();
+                            int rInt = r.Next(0, octl.routeList.Count - 1);
+
+   
+                            for (int j = 0; j < rInt; j++)
+                            {
+                                string sTrySend = @"<cmd>OUTGOINGTRYFAIL;" + octl.CallID + @"," + octl.routeList[j].SRC + @"," + octl.routeList[j].DST + @"," + octl.routeList[j].NAPName + @",12.34.56.789" + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"</cmd>";
+
+                                byte[] bData = Encoding.ASCII.GetBytes(sTrySend);
+                                client.Send(bData);
+                            }
+
+                        }
+                        break;
+                }
+
+
+
+
+
+            }
+
             return;
 
-            //if (sHead == "ROUTEREQUEST")
-            //{
-                //if (DateTime.Now.Hour == iCurrentHour)
-                //{
-                //    iHourlyRecv += 1;
-                //}
-                //else
-                //{
-                //    iHourlyRecv = 0;
-                //}
 
-                //if (DateTime.Now.Day == iCurrentDay)
-                //{
-                //    iDaillyRecv += 1;
-                //}
-                //else
-                //{
-                //    iDaillyRecv = 0;
-                //}
-
-                //iTotalRecv += 1;
-
-                //textBox3.Invoke((Action)(() => textBox3.Text = iHourlyRecv.ToString()));
-                //textBox7.Invoke((Action)(() => textBox7.Text = iDaillyRecv.ToString()));
-                //textBox11.Invoke((Action)(() => textBox11.Text = iTotalRecv.ToString()));
-
-
-                //// pending
-                //textBox5.Invoke((Action)(() => textBox5.Text = (iTotalSend - iTotalRecv / 2).ToString()));
-
-                //richTextBox2.Invoke((Action)(() => richTextBox2.AppendText(sReply + "\r\n")));
-
-            //}
-
-            return;
 
         }
 
@@ -217,11 +314,43 @@ namespace RouterClient
                     now.ToString("yyyyMMdd")
                     + ("00" + mID.ToString()).RightStr(2)
                     + ("00000000" + requestID.ToString()).RightStr(8);
+
+                Console.WriteLine("callid is {0}", call_id);
+
                 RRequest request = new RRequest(call_id);                
                 mPendingRequests.Add(request.CallID, request);
                 sendRequest(request);
-                int sleep = MyLib.Rand.RandomInt(1, 1000);
-                SleepMS(sleep);               
+
+
+                int sleep = MyLib.Rand.RandomInt(1, 100);
+                SleepMS(5000);
+                //
+
+                foreach (OutgoingCallTringLists octlaaa in loctl)
+                {
+                    foreach (availableRoutes araaa in octlaaa.routeList)
+                    {
+                        TimeSpan ts = DateTime.Now - araaa.SuccessTime;
+                        if ((araaa.IfSuccess == true) && (ts.TotalSeconds > 60))
+                        {
+
+                            string sTrySend = @"<cmd>CALLSTOP;" + octlaaa.CallID + @"," + araaa.SRC + @"," + araaa.DST + @"," + araaa.NAPName + @",12.34.56.789" + @"," + araaa.SuccessTime.ToString("yyyy/MM/dd HH:mm") + @"," + araaa.SuccessTime.ToString("yyyy/MM/dd HH:mm") + @"," + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + @"," + (int)ts.TotalSeconds +  @"</cmd>";
+
+                            byte[] bData = Encoding.ASCII.GetBytes(sTrySend);
+                            client.Send(bData);
+                            araaa.SuccessTime = DateTime.MaxValue;
+
+                            Console.WriteLine("{0} have success trying", octlaaa.CallID);
+                            break;
+                        }
+                    }
+
+                }
+
+
+
+
+
             }
             catch (Exception ex)
             {

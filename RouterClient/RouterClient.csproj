@@ -39,7 +39,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="SuperSocket.ClientEngine">
+    <Reference Include="SuperSocket.ClientEngine, Version=0.8.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>SuperSocketDlls\SuperSocket.ClientEngine.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.ProtoBase">
@@ -105,6 +106,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="log4net.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RouterCommon\RouterCommon.csproj">
+      <Project>{62b2e235-8774-437e-a6c1-0f748f0a4855}</Project>
+      <Name>RouterCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

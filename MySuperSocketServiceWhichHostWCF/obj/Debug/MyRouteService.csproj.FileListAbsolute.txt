@@ -22,3 +22,5 @@ D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\SuperSocket.Sock
 D:\code\RouteService\MySuperSocketServiceWhichHostWCF\obj\Debug\MyRouteService.exe
 D:\code\RouteService\MySuperSocketServiceWhichHostWCF\obj\Debug\MyRouteService.pdb
 D:\code\RouteService\MySuperSocketServiceWhichHostWCF\obj\Debug\MyRouteService.csprojResolveAssemblyReference.cache
+D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\RouterCommon.dll
+D:\code\RouteService\MySuperSocketServiceWhichHostWCF\bin\Debug\RouterCommon.pdb

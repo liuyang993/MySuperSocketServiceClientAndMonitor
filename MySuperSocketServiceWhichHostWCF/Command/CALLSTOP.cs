@@ -39,7 +39,12 @@ namespace MyRouteService.Command
 
             string sSendToMonitor = "From " + requestInfo.Key + @":" + requestInfo.Body;
 
+            //Console.WriteLine("callid {0} callstop have recv at {1}", strCallID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
+
+            ((TCPSocketServer)session.AppServer).Logger.Debug("callid " + strCallID + " callstop have recv at " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
+
             #region new methoc use tcpserver cache 
+
 
             CacheItem ci = new CacheItem();
             ci.session = session;
@@ -53,10 +58,10 @@ namespace MyRouteService.Command
                 Console.WriteLine("cache have full");
                 //TODO  :  if queue is full , what about this request , return will lose it 
                 return;
+
             }
 
             #endregion
-
 
             string sReply = @"<reply>" + @"CALLSTOPSUCCESS;" + strCallID + @"," + strNAPout + @",OK" + @"</reply>";
 

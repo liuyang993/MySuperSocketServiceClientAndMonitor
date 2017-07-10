@@ -39,6 +39,9 @@ namespace MyRouteService.Command
 
             string strCallID = requestInfo.Parameters[0].ToString();
 
+            //Console.WriteLine("callid {0} route request have recv at {1}", strCallID,DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
+
+            ((TCPSocketServer)session.AppServer).Logger.Debug("callid " + strCallID + " route request have recv at " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
 
             session.iTotalRecv++;
 

@@ -104,7 +104,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="log4net.config" />
+    <None Include="log4net.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -121,6 +123,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RouterCommon\RouterCommon.csproj">
+      <Project>{62b2e235-8774-437e-a6c1-0f748f0a4855}</Project>
+      <Name>RouterCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

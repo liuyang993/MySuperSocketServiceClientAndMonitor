@@ -13,3 +13,5 @@ D:\code\RouteService\RouterClient\obj\Debug\RouterClient.csprojResolveAssemblyRe
 D:\code\RouteService\RouterClient\bin\Debug\RouterClient.exe.config
 D:\code\RouteService\RouterClient\bin\Debug\SuperSocket.ClientEngine.dll
 D:\code\RouteService\RouterClient\bin\Debug\SuperSocket.ClientEngine.pdb
+D:\code\RouteService\RouterClient\bin\Debug\RouterCommon.dll
+D:\code\RouteService\RouterClient\bin\Debug\RouterCommon.pdb

@@ -52,8 +52,7 @@ namespace MyRouteService
             ClientConnectTime = DateTime.Now;
             bIfMonitorClient = false;
             iDebugLevel = 3;
-            Logger.Info("111");
-
+            
             #region Increase Client Number Using SQL ,  now do not use this way 
             //using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
             //{

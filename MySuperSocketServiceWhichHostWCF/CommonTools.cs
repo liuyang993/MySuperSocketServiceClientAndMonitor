@@ -71,6 +71,7 @@ namespace MyRouteService
                 case SqlDbType.DateTime:
                 case SqlDbType.DateTime2:
                 case SqlDbType.DateTimeOffset:
+                case SqlDbType.UniqueIdentifier:
                     retval = "'" + sp.Value.ToString().Replace("'", "''") + "'";
                     break;
 
@@ -144,99 +145,6 @@ namespace MyRouteService
 
             return sql.ToString();
         }
-
-        //public static void checkListCount(List<CommandDetail> lc)
-        //{
-        //    if (lc.Count > 100)
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.ConnectionString.ToString()))
-        //        {
-        //            try
-        //            {
-        //                conn.Open();
-
-        //                SqlCommand comm = conn.CreateCommand();
-        //                //comm.CommandText = "sp_app_RatePlanDetail_Add_1114";
-        //                comm.CommandText = "sp_InsertRequestReply";
-        //                comm.CommandType = System.Data.CommandType.StoredProcedure;
-        //                comm.CommandTimeout = 300;
-
-
-        //                comm.Parameters.Add(new SqlParameter()
-        //                {
-        //                    ParameterName = "@TVP",
-        //                    SqlDbType = SqlDbType.Structured,
-        //                    Value = GetDataTableParam(lc)
-        //                });
-
-        //                comm.Parameters.Add(new SqlParameter()
-        //                {
-        //                    ParameterName = "@result",
-        //                    SqlDbType = SqlDbType.Int,
-        //                    Direction = ParameterDirection.Output,
-        //                    Size = 4
-        //                });
-
-        //                comm.Parameters.Add(new SqlParameter()
-        //                {
-        //                    ParameterName = "@errormsg",
-        //                    SqlDbType = SqlDbType.VarChar,
-        //                    Direction = ParameterDirection.Output,
-        //                    Size = 1000
-        //                });
-
-        //                comm.ExecuteNonQuery();
-        //            }
-        //            catch (Exception uep)
-        //            {
-        //                return;
-        //            }
-        //        }   //using
-
-        //        //清空
-        //        lc.Clear();
-
-
-
-        //    }
-        //}
-
-        //public static DataTable GetDataTableParam(List<CommandDetail> People)
-        //{
-        //    //define the table and rows (the rows match those in the TVP)
-        //    DataTable peopleTable = new DataTable();
-        //    peopleTable.Columns.Add("Session_IP", typeof(string));
-        //    peopleTable.Columns.Add("Session_ID", typeof(string));
-        //    peopleTable.Columns.Add("CommandName", typeof(string));
-
-        //    peopleTable.Columns.Add("Request_Recv_Time", typeof(DateTime));
-        //    peopleTable.Columns.Add("Request_reply_Time", typeof(DateTime));
-
-        //    peopleTable.Columns.Add("Request_Content", typeof(string));
-        //    peopleTable.Columns.Add("Reply_Content", typeof(string));
-        //    peopleTable.Columns.Add("Err_Reason", typeof(string));
-
-
-        //    foreach (CommandDetail p in People)
-        //    {
-        //        // add a row for each person
-        //        DataRow row = peopleTable.NewRow();
-        //        //row["clsCarrierID"] = p.clsCarrierID;
-        //        //row["clsis_supplier"] = p.clsis_supplier;
-        //        row["Session_IP"] = p.sessionIP;
-        //        row["Session_ID"] = p.sessionID;
-        //        row["CommandName"] = p.commandName;
-
-        //        row["Request_Recv_Time"] = p.cmd_recv_time;
-        //        row["Request_reply_Time"] = p.cmd_reply_time;
-        //        row["Request_Content"] = p.cmd_content;
-        //        row["Reply_Content"] = p.reply_content;
-        //        row["Err_Reason"] = p.err_reason;
-
-        //        peopleTable.Rows.Add(row);
-        //    }
-        //    return peopleTable;
-        //}
 
     }
 }

@@ -37,6 +37,10 @@ namespace MyRouteService.Command
 
             string sSendToMonitor = "From " + requestInfo.Key + @":" + requestInfo.Body;
 
+            //Console.WriteLine("callid {0} callfail have recv at {1}", strCallID, DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
+            ((TCPSocketServer)session.AppServer).Logger.Debug("callid " + strCallID + " callfail have recv at " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"));
+
+
             #region new methoc use tcpserver cache 
 
             CacheItem ci = new CacheItem();

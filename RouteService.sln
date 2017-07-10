@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRouteService", "MySuperSo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouterClient", "RouterClient\RouterClient.csproj", "{05D8A72E-C458-4AAC-9FFE-4BAF545031F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouterCommon", "RouterCommon\RouterCommon.csproj", "{62B2E235-8774-437E-A6C1-0F748F0A4855}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{05D8A72E-C458-4AAC-9FFE-4BAF545031F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05D8A72E-C458-4AAC-9FFE-4BAF545031F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05D8A72E-C458-4AAC-9FFE-4BAF545031F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62B2E235-8774-437E-A6C1-0F748F0A4855}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62B2E235-8774-437E-A6C1-0F748F0A4855}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62B2E235-8774-437E-A6C1-0F748F0A4855}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62B2E235-8774-437E-A6C1-0F748F0A4855}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,6 +15,7 @@ using SuperSocket.SocketEngine;    // for  BootstrapFactory
 using System.Net.Sockets;
 
 using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace MyRouteService
 {
@@ -109,6 +110,7 @@ namespace MyRouteService
         public ConcurrentQueue<CommandDetail> CommandDetailList = null;    // ConcurrentQueue :  thread safe queue
         public int iTotalFinish = 0;
 
+        //ConcurrentBag<OutgoingCallTringLists> loctl = new ConcurrentBag<OutgoingCallTringLists>();
         List<OutgoingCallTringLists> loctl = new List<OutgoingCallTringLists>();
 
 
@@ -366,7 +368,13 @@ namespace MyRouteService
                                         octl.routeList.Add(AR);
                                     }
 
-                                ((TCPSocketServer)typed.session.AppServer).loctl.Add(octl);
+
+                                    lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                    {
+
+                                        ((TCPSocketServer)typed.session.AppServer).loctl.Add(octl);
+
+                                    }
 
                                     sb = sb.Remove(sb.Length - 1, 1);
                                     //Console.WriteLine("send back route request list {0} at {1}",sb,DateTime.Now.ToString());
@@ -388,6 +396,7 @@ namespace MyRouteService
                                 break;
                             case "OUTGOINGTRYFAIL":
                                 {
+
                                     //RouterCommon.CMD_OUTGOINGTRYFAIL cmd = new RouterCommon.CMD_OUTGOINGTRYFAIL(
                                     //    Paras[0]
                                     //    , Paras[0]
@@ -404,28 +413,33 @@ namespace MyRouteService
                                     OutgoingCallTringLists myObject = null;
                                     availableRoutes ar = null;
 
-                                    myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(x => x.CallID == Paras[0]);
-
-                                    ar = myObject.routeList.FirstOrDefault(x => x.NAPName == Paras[3]);
-
-                                    if (ar != null)
+                                    lock (((TCPSocketServer)typed.session.AppServer).loctl)
                                     {
-                                        ar.IfAlreadyTry = true;
-                                        ar.IPOUT = Paras[4];           // record IP  , three time 
-                                        //ar.setuptime = cmd.setup_time;  TODO  20170630b  shaohua 
 
+                                        myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(x => x.CallID == Paras[0]);
 
-                                        ar.setuptime = DateTime.Parse(Paras[5]);
-                                        ar.connecttime = DateTime.Parse(Paras[6]);
-                                        ar.disconnecttime = DateTime.Parse(Paras[7]);
+                                        ar = myObject.routeList.FirstOrDefault(x => x.NAPName == Paras[3]);
 
-                                        if (!myObject.IfTryingAny)
+                                        if (ar != null)
                                         {
-                                            //Console.WriteLine("no route have trying , this is the first");
-                                            myObject.IfTryingAny = true;
-                                            ar.IsFirstTry = true;
-                                        }
+                                            ar.IfAlreadyTry = true;
+                                            ar.IPOUT = Paras[4];           // record IP  , three time 
+                                                                           //ar.setuptime = cmd.setup_time;  TODO  20170630b  shaohua 
 
+
+                                            ar.setuptime = DateTime.Parse(Paras[5]);
+                                            ar.connecttime = DateTime.Parse(Paras[6]);
+                                            ar.disconnecttime = DateTime.Parse(Paras[7]);
+
+                                            if (!myObject.IfTryingAny)
+                                            {
+                                                //Console.WriteLine("no route have trying , this is the first");
+                                                myObject.IfTryingAny = true;
+                                                ar.IsFirstTry = true;
+                                            }
+
+                                           
+                                        }
 
                                         bool AllHaveTry = true;
                                         foreach (availableRoutes arTest in myObject.routeList)
@@ -434,13 +448,16 @@ namespace MyRouteService
                                             {
                                                 //TODO  there  exist multi thread problem ,  same fail record maybe record multi times 
                                                 // send previous ongoing call fail 
-                                                arTest.IfAlreadySend = true;
+                                                
                                                 //Console.WriteLine("callid {0} send previous nap {1} tryfail when exist", Paras[0], arTest.NAPName);
                                                 ((TCPSocketServer)typed.session.AppServer).Logger.Debug("callid " + Paras[0].ToString() + " send previous nap " + arTest.NAPName + " tryfail when exist");
 
-
-                                                myObject.lastOper = "TRYINGFAIL";
-                                                myObject.lastOperTime = DateTime.Now;
+                                                lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                                {
+                                                    arTest.IfAlreadySend = true;
+                                                    myObject.lastOper = "TRYINGFAIL";
+                                                    myObject.lastOperTime = DateTime.Now;
+                                                }
 
                                                 #region sendPreviousFail
 
@@ -577,10 +594,13 @@ namespace MyRouteService
                                             ((TCPSocketServer)typed.session.AppServer).Logger.Debug("callid " + Paras[0].ToString() + " all route have trying  this " + Paras[3] + " is the last one");
 
 
-                                            ar.IfAlreadySend = true;
-                                           
-                                            myObject.lastOper = "TRYINGFAIL";
-                                            myObject.lastOperTime = DateTime.Now;
+                                            lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                            {
+                                                ar.IfAlreadySend = true;
+
+                                                myObject.lastOper = "TRYINGFAIL";
+                                                myObject.lastOperTime = DateTime.Now;
+                                            }
 
                                             #region sendLastFail
 
@@ -700,7 +720,12 @@ namespace MyRouteService
                                             #endregion
 
                                             // remove from  List
-                                            ((TCPSocketServer)typed.session.AppServer).loctl.Remove(myObject);
+                                            typed.session.AppServer.Logger.Debug("all trying fail So  remove this item which CallID is " + Paras[0]);
+
+                                            lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                            {
+                                                ((TCPSocketServer)typed.session.AppServer).loctl.Remove(myObject);
+                                            }
 
 
                                         }
@@ -717,9 +742,17 @@ namespace MyRouteService
 
                             case "OUTGOINGTRYSUCCESS":
                                 {
-                                    OutgoingCallTringLists myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(x => x.CallID == Paras[0]);
 
-                                    availableRoutes ar = myObject.routeList.FirstOrDefault(x => x.NAPName == Paras[3]);
+                                    OutgoingCallTringLists myObject = null;
+                                    availableRoutes ar = null;
+
+                                    lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                    {
+
+                                         myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(x => x.CallID == Paras[0]);
+
+                                         ar = myObject.routeList.FirstOrDefault(x => x.NAPName == Paras[3]);
+                                    }
 
 
                                     if (ar != null)
@@ -732,7 +765,7 @@ namespace MyRouteService
                                                 //Console.WriteLine("send previous tryfail when exist");
                                                 #region send previous fail 
 
-
+                                                comm.Parameters.Clear();
                                                 comm.CommandText = "sp_api_call_failed";
                                                 comm.CommandType = System.Data.CommandType.StoredProcedure;
                                                 comm.CommandTimeout = 300;
@@ -836,26 +869,27 @@ namespace MyRouteService
                                                 //comm.Parameters["@RETURN_VALUE"].Direction = ParameterDirection.ReturnValue;
 
 
-                                                sql = CommonTools.CommandAsSql(comm);
-                                                //typed.session.AppServer.Logger.Info(sql1);
+                                                sql = CommonTools.CommandAsSql(comm);           // 20170712  LY   temp  comment
+                                              
 
                                                 comm.ExecuteNonQuery();
 
                                                 #endregion
 
-                                                arTest.IfAlreadySend = true;
 
-                                             
-
-                                                myObject.lastOper = "TRYINGFAIL";
-                                                myObject.lastOperTime = DateTime.Now;
+                                                lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                                {
+                                                    arTest.IfAlreadySend = true;
+                                                    myObject.lastOper = "TRYINGFAIL";
+                                                    myObject.lastOperTime = DateTime.Now;
+                                                }
                                             }
                                         }
 
                                         if (!myObject.IfTryingAny)
                                         {
                                             //Console.WriteLine("no route have trying , this is the first try and success");
-                                            myObject.IfTryingAny = true;
+                                            
 
                                             #region send call start , first try success
 
@@ -937,9 +971,13 @@ namespace MyRouteService
                                             #endregion
 
 
-                                            myObject.lastOper = "TRYINGSUCCESS";
-                                            myObject.lastOperTime = DateTime.Now;
-                                            ar.IfAlreadySend = true;
+                                            lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                            {
+                                                myObject.IfTryingAny = true;
+                                                myObject.lastOper = "TRYINGSUCCESS";
+                                                myObject.lastOperTime = DateTime.Now;
+                                                ar.IfAlreadySend = true;
+                                            }
                                         }
                                         else
                                         {
@@ -1023,10 +1061,13 @@ namespace MyRouteService
 
                                             #endregion
 
-                                            myObject.lastOper = "TRYINGSUCCESS";
-                                            myObject.lastOperTime = DateTime.Now;
+                                            lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                            {
+                                                myObject.lastOper = "TRYINGSUCCESS";
+                                                myObject.lastOperTime = DateTime.Now;
 
-                                            ar.IfAlreadySend = true;
+                                                ar.IfAlreadySend = true;
+                                            }
 
                                         }
 
@@ -1041,10 +1082,20 @@ namespace MyRouteService
                                 break;
                             case "CALLSTOP":
                                 {
-                                    OutgoingCallTringLists myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(x => x.CallID == Paras[0]);
+                                    OutgoingCallTringLists myObject = null;
+                                    availableRoutes ar = null;
 
-                                    availableRoutes ar = myObject.routeList.FirstOrDefault(x => x.NAPName == Paras[3]);
 
+                                    lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                    {
+
+                                         myObject = ((TCPSocketServer)typed.session.AppServer).loctl.FirstOrDefault(x => x.CallID == Paras[0]);
+                                         Debug.Assert(myObject != null);
+                                         
+
+                                         ar = myObject.routeList.FirstOrDefault(x => x.NAPName == Paras[3]);
+
+                                    }
 
                                     if (ar != null)
                                     {
@@ -1147,7 +1198,13 @@ namespace MyRouteService
                                         comm.ExecuteNonQuery();
 
                                         // remove  object 
-                                        ((TCPSocketServer)typed.session.AppServer).loctl.Remove(myObject);
+                                        typed.session.AppServer.Logger.Debug("call have finish So  remove this item which CallID is " + Paras[0]);
+
+
+                                        lock (((TCPSocketServer)typed.session.AppServer).loctl)
+                                        {
+                                           ((TCPSocketServer)typed.session.AppServer).loctl.Remove(myObject);
+                                        }
 
                                     }
 
@@ -1167,7 +1224,7 @@ namespace MyRouteService
             //TODO record request and error reason
 
             //Console.WriteLine("{0} exception happen ",uep.ToString());
-            typed.session.AppServer.Logger.Info("****************************************************************");
+            typed.session.AppServer.Logger.Info("********************Exception Info Begin********************************************");
 
             typed.session.AppServer.Logger.Info(uep.ToString());
 
@@ -1176,7 +1233,7 @@ namespace MyRouteService
 
             typed.session.AppServer.Logger.Info("Exception CallID is " + Paras[0]);
 
-            typed.session.AppServer.Logger.Info("****************************************************************");
+            typed.session.AppServer.Logger.Info("************************Exception Info End****************************************");
 
                     //typed.cDetail.cmd_reply_time = DateTime.Now;
                     //typed.cDetail.reply_content = uep.Message;
@@ -1263,10 +1320,10 @@ namespace MyRouteService
 
         private void checkPendingOngoingCall(object state)
         {
-
+            
             for (int i = loctl.Count - 1; i >= 0; i--)
             {
-                if (loctl[i].lastOper == "TRYINGFAIL")
+                if ((loctl[i]!=null)&& (loctl[i].lastOper == "TRYINGFAIL"))
                 {
                     TimeSpan ts = DateTime.Now - loctl[i].lastOperTime;
                     if (ts.TotalSeconds > 30)
@@ -1279,9 +1336,10 @@ namespace MyRouteService
                                 conn.Open();
                                 SqlCommand comm = conn.CreateCommand();
 
-                                foreach (availableRoutes arTest in loctl[i].routeList)
+                                //foreach (availableRoutes arTest in loctl[i].routeList)
+                                for (int j = loctl[i].routeList.Count - 1; j >= 0; j--)
                                 {
-                                    if (arTest.IfAlreadyTry && !arTest.IfSuccess && !arTest.IfAlreadySend)
+                                    if (loctl[i].routeList[j].IfAlreadyTry && !loctl[i].routeList[j].IfSuccess && !loctl[i].routeList[j].IfAlreadySend)
                                     {
 
                                         comm.CommandText = "sp_api_call_failed";
@@ -1299,10 +1357,10 @@ namespace MyRouteService
                                         comm.Parameters["@I_RegularDST"].Value = loctl[i].regularDST;
                                         comm.Parameters.Add("@I_SRCNumOut", SqlDbType.NChar, 30);
                                         comm.Parameters["@I_SRCNumOut"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_SRCNumOut"].Value = arTest.SRC;
+                                        comm.Parameters["@I_SRCNumOut"].Value = loctl[i].routeList[j].SRC;
                                         comm.Parameters.Add("@I_DSTNumOut", SqlDbType.NChar, 30);
                                         comm.Parameters["@I_DSTNumOut"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_DSTNumOut"].Value = arTest.DST;
+                                        comm.Parameters["@I_DSTNumOut"].Value = loctl[i].routeList[j].DST;
                                         comm.Parameters.Add("@I_CustID", SqlDbType.Int, 4);
                                         comm.Parameters["@I_CustID"].Direction = ParameterDirection.Input;
                                         comm.Parameters["@I_CustID"].Value = loctl[i].customID;
@@ -1317,42 +1375,42 @@ namespace MyRouteService
                                         comm.Parameters["@I_IPIn"].Value = loctl[i].IPIN;
                                         comm.Parameters.Add("@I_EntryDetailID", SqlDbType.UniqueIdentifier, 16);
                                         comm.Parameters["@I_EntryDetailID"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_EntryDetailID"].Value = arTest.EntryDetailID;
+                                        comm.Parameters["@I_EntryDetailID"].Value = loctl[i].routeList[j].EntryDetailID;
                                         comm.Parameters.Add("@I_ByPrefix", SqlDbType.NVarChar, 50);
                                         comm.Parameters["@I_ByPrefix"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_ByPrefix"].Value = arTest.prefix;
+                                        comm.Parameters["@I_ByPrefix"].Value = loctl[i].routeList[j].prefix;
                                         comm.Parameters.Add("@I_ByPrefixGroup", SqlDbType.NVarChar, 50);
                                         comm.Parameters["@I_ByPrefixGroup"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_ByPrefixGroup"].Value = arTest.prefixGrp;
+                                        comm.Parameters["@I_ByPrefixGroup"].Value = loctl[i].routeList[j].prefixGrp;
                                         comm.Parameters.Add("@I_VendorID", SqlDbType.Int, 4);
                                         comm.Parameters["@I_VendorID"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_VendorID"].Value = arTest.vendorID;
+                                        comm.Parameters["@I_VendorID"].Value = loctl[i].routeList[j].vendorID;
                                         comm.Parameters.Add("@I_TGIDOut", SqlDbType.UniqueIdentifier, 16);
                                         comm.Parameters["@I_TGIDOut"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_TGIDOut"].Value = arTest.TGID;
+                                        comm.Parameters["@I_TGIDOut"].Value = loctl[i].routeList[j].TGID;
                                         comm.Parameters.Add("@I_TIDOut", SqlDbType.UniqueIdentifier, 16);
                                         comm.Parameters["@I_TIDOut"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_TIDOut"].Value = arTest.TID;
+                                        comm.Parameters["@I_TIDOut"].Value = loctl[i].routeList[j].TID;
                                         comm.Parameters.Add("@I_NAPOut", SqlDbType.NVarChar, 50);
                                         comm.Parameters["@I_NAPOut"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_NAPOut"].Value = arTest.NAPName;
+                                        comm.Parameters["@I_NAPOut"].Value = loctl[i].routeList[j].NAPName;
                                         comm.Parameters.Add("@I_IPOut", SqlDbType.NVarChar, 50);
                                         comm.Parameters["@I_IPOut"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_IPOut"].Value = arTest.IPOUT;
+                                        comm.Parameters["@I_IPOut"].Value = loctl[i].routeList[j].IPOUT;
                                         comm.Parameters.Add("@I_SetupTime", SqlDbType.DateTime, 8);
                                         comm.Parameters["@I_SetupTime"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_SetupTime"].Value = arTest.setuptime;
+                                        comm.Parameters["@I_SetupTime"].Value = loctl[i].routeList[j].setuptime;
                                         comm.Parameters.Add("@I_Connecttime", SqlDbType.DateTime, 8);
                                         comm.Parameters["@I_Connecttime"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_Connecttime"].Value = arTest.connecttime;
+                                        comm.Parameters["@I_Connecttime"].Value = loctl[i].routeList[j].connecttime;
                                         comm.Parameters.Add("@I_Disconnecttime", SqlDbType.DateTime, 8);
                                         comm.Parameters["@I_Disconnecttime"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_Disconnecttime"].Value = arTest.disconnecttime;
+                                        comm.Parameters["@I_Disconnecttime"].Value = loctl[i].routeList[j].disconnecttime;
 
 
                                         comm.Parameters.Add("@I_FlagIsFirstTry", SqlDbType.Int, 4);
                                         comm.Parameters["@I_FlagIsFirstTry"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_FlagIsFirstTry"].Value = arTest.IsFirstTry ? 1 : 0;
+                                        comm.Parameters["@I_FlagIsFirstTry"].Value = loctl[i].routeList[j].IsFirstTry ? 1 : 0;
 
                                         comm.Parameters.Add("@I_FlagNotLastTry", SqlDbType.Int, 4);
                                         comm.Parameters["@I_FlagNotLastTry"].Direction = ParameterDirection.Input;
@@ -1373,12 +1431,12 @@ namespace MyRouteService
                                         comm.Parameters["@I_Fee"].Precision = 18;
                                         comm.Parameters["@I_Fee"].Scale = 8;
                                         comm.Parameters["@I_Fee"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_Fee"].Value = arTest.RateFee;
+                                        comm.Parameters["@I_Fee"].Value = loctl[i].routeList[j].RateFee;
                                         comm.Parameters.Add("@I_Cost", SqlDbType.Decimal, 9);
                                         comm.Parameters["@I_Cost"].Precision = 18;
                                         comm.Parameters["@I_Cost"].Scale = 8;
                                         comm.Parameters["@I_Cost"].Direction = ParameterDirection.Input;
-                                        comm.Parameters["@I_Cost"].Value = arTest.RateCost;
+                                        comm.Parameters["@I_Cost"].Value = loctl[i].routeList[j].RateCost;
                                         comm.Parameters.Add("@O_ErrCode", SqlDbType.Int, 4);
                                         comm.Parameters["@O_ErrCode"].Direction = ParameterDirection.Output;
                                         comm.Parameters.Add("@O_Msg", SqlDbType.NVarChar, 200);
@@ -1390,7 +1448,12 @@ namespace MyRouteService
 
                                         comm.ExecuteNonQuery();
 
-                                        arTest.IfAlreadySend = true;
+                                        lock (loctl)
+                                        {
+                                            loctl[i].lastOperTime = DateTime.Now;
+                                            loctl[i].routeList[j].IfAlreadySend = true;           //20170712  LY : wrong  , can not modify in foreach loop  
+                                            loctl[i].lastOper = "CLEARDONE";
+                                        }
 
                                         break;
                                     }
@@ -1409,8 +1472,12 @@ namespace MyRouteService
 
                         #endregion
 
-                        Logger.Debug("Last opetime is " + loctl[i].lastOperTime.ToString() + " but current time is " + DateTime.Now.ToString() + " So  remove this item ");
-                        loctl.RemoveAt(i);
+                        //Logger.Debug("Last opetime is " + loctl[i].lastOperTime.ToString() + " but current time is " + DateTime.Now.ToString() + " So  remove this item which CallID is " + loctl[i].CallID);
+
+                        lock (loctl)
+                        {
+                            //loctl.RemoveAt(i);
+                        }
                     }
                 }
 

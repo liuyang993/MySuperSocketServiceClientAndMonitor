@@ -21,55 +21,8 @@ namespace RouterClient
             InitializeComponent();
 
             m_form = this;
-            Log.OnLog += new Log.OnLogHandler(OnLog);
+           // Log.OnLog += new Log.OnLogHandler(OnLog);
         }
-
-        //public void WriteLogImplement(Color color, string s, bool log_to_window, bool log_to_file)
-        //{
-        //    try
-        //    {
-        //        if (tbLog.TextLength > 100000)
-        //        {
-        //            tbLog.SelectionStart = 0;
-        //            tbLog.SelectionLength = 50000;
-        //            tbLog.SelectedText = "";
-        //        }
-
-        //        if (log_to_window)
-        //        {
-        //            string dt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ");
-        //            int start = tbLog.TextLength;
-        //            tbLog.AppendText(dt);
-        //            tbLog.SelectionStart = start;
-        //            tbLog.SelectionLength = dt.Length;
-        //            tbLog.SelectionColor = Color.Blue;
-
-        //            start = tbLog.TextLength;
-        //            tbLog.AppendText(s + "\r\n");
-        //            tbLog.SelectionStart = start;
-        //            tbLog.SelectionLength = s.Length;
-        //            tbLog.SelectionColor = color;
-
-        //            tbLog.SelectionStart = tbLog.TextLength;
-        //            tbLog.SelectionLength = 0;
-        //            tbLog.ScrollToCaret();
-        //        }
-
-        //        if (log_to_file)
-        //        {
-        //            string log_filename = Utility.GetCurrentPath() + (MyLib.StringUtility.LeftCompare(s, "Warning:") ? "Warning_" : "Log_") + DateTime.Now.ToString("yyyy_MM_dd") + ".txt";
-        //            FileStream fs = new System.IO.FileStream(log_filename, FileMode.Append);
-        //            byte[] buffer = System.Text.ASCIIEncoding.ASCII.GetBytes(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss: ") + s + "\r\n");
-        //            fs.Write(buffer, 0, buffer.Length);
-        //            fs.Flush();
-        //            fs.Close();
-        //        }
-        //        //Application.DoEvents();
-        //    }
-        //    catch
-        //    {
-        //    }
-        //}
 
         delegate void delegate_OnLog(Color color, string s);
         static void OnLog(Log.ErrorLevel level, string message)
@@ -140,12 +93,12 @@ namespace RouterClient
         private void btnStart_Click(object sender, EventArgs e)
         {
             client1.Start();
-            //client2.Start();
-            //client3.Start();
-            //client4.Start();
+            client2.Start();
+            client3.Start();
+            client4.Start();
 
-            timer1.Interval = 1000;
-            timer1.Enabled = true;
+            //timer1.Interval = 1000;
+            //timer1.Enabled = true;
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -173,13 +126,13 @@ namespace RouterClient
 
             // client 2 
 
-            lbl_Client2HourSend.Text = client2.HourCounter.ToString();
-            lbl_Client2DaySend.Text = client2.DayCounter.ToString();
-            lbl_Client2TotalSend.Text = client2.TotalCounter.ToString();
+            //lbl_Client2HourSend.Text = client2.HourCounter.ToString();
+            //lbl_Client2DaySend.Text = client2.DayCounter.ToString();
+            //lbl_Client2TotalSend.Text = client2.TotalCounter.ToString();
 
-            lbl_Client2HourRecv.Text = client2.HourRecvCounter.ToString();
-            lbl_Client2DayRecv.Text = client2.DayRecvCounter.ToString();
-            lbl_Client2TotalRecv.Text = client2.TotalRecvCounter.ToString();
+            //lbl_Client2HourRecv.Text = client2.HourRecvCounter.ToString();
+            //lbl_Client2DayRecv.Text = client2.DayRecvCounter.ToString();
+            //lbl_Client2TotalRecv.Text = client2.TotalRecvCounter.ToString();
 
         }
     }

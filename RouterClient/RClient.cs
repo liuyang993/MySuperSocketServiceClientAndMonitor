@@ -13,9 +13,11 @@ using System.Collections.Concurrent;
 
 namespace RouterClient
 {
-    enum CallState
+    enum CallState : int
     {
-        FullFail, Success, FailCozInterrupt
+        FullFail = 1,
+        Success = 2,
+        FailCozInterrupt = 3
     }
 
     public class availableRoutes
@@ -52,18 +54,18 @@ namespace RouterClient
             this.mID = id;
             this.mMaxCalls = calls;
 
-            var result = AccessTheWebAsync();
+            var result = InitEasyClient();
         }
 
 
-        private int AccessTheWebAsync()
+        private int InitEasyClient()
         {
             client = new EasyClient();
 
             client.Initialize(new MyReceiveFilter(), (request) =>
             {
                 // handle the received request
-                ShowWindowsMessage(request.Key, request.Body);
+                OnRecvData(request.Key, request.Body);
             });
 
             var connected = client.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2080));
@@ -73,7 +75,7 @@ namespace RouterClient
         }
 
 
-        public void ShowWindowsMessage(string sHead, string sReply)
+        public void OnRecvData(string sHead, string sReply)
         {
             DateTime now = DateTime.Now;
             if (now.Hour == lastReportAt.Hour)
@@ -210,7 +212,7 @@ namespace RouterClient
 
 
 
-            }  //  end  of  if reply  is route request 
+            }  //  end  of  if reply  is route request
             else if (sHead == "OUTGOINGTRYSUCCESS")
             {
 
@@ -338,7 +340,7 @@ namespace RouterClient
                 }
 
                 requestID++;
-                if (requestID <= 1000)
+                if (requestID <= 2000)
                 {
                     string call_id =
                     now.ToString("yyyyMMdd")
